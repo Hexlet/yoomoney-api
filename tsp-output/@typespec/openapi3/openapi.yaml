@@ -1,0 +1,5029 @@
+openapi: 3.0.0
+info:
+  title: Справочник API ЮKassa
+  version: 1.0.0
+tags:
+  - name: Платежи
+  - name: Способы оплаты
+  - name: Счета
+  - name: Возвраты
+  - name: Чеки
+  - name: Сделки
+  - name: Выплаты
+  - name: Участники СБП
+  - name: Персональные данные
+  - name: Webhooks
+  - name: Настройки
+paths:
+  /deals:
+    post:
+      operationId: Deals_create
+      description: Создание сделки
+      parameters:
+        - name: Idempotence-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SafeDeal'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '429':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Сделки
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SafeDealRequest'
+    get:
+      operationId: Deals_list
+      description: Список сделок
+      parameters:
+        - name: created_at.gte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.gt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.lte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.lt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: expires_at.gte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: expires_at.gt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: expires_at.lte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: expires_at.lt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/DealStatus'
+          explode: false
+        - name: full_text_search
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 10
+          explode: false
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DealList'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '429':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Сделки
+  /deals/{deal_id}:
+    get:
+      operationId: Deals_retrieve
+      description: Информация о сделке
+      parameters:
+        - name: deal_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DealId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SafeDeal'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '429':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Сделки
+  /invoices:
+    post:
+      operationId: Invoices_create
+      description: Создание счета
+      parameters:
+        - name: Idempotence-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Счета
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInvoiceRequest'
+  /invoices/{invoice_id}:
+    get:
+      operationId: Invoices_retrieve
+      description: Информация о счете
+      parameters:
+        - name: invoice_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/InvoiceId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Счета
+  /me:
+    get:
+      operationId: MeResource_retrieve
+      description: Получение настроек магазина или шлюза
+      parameters:
+        - name: on_behalf_of
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Настройки
+  /payment_methods:
+    post:
+      operationId: PaymentMethods_create
+      description: Создание способа оплаты
+      parameters:
+        - name: Idempotence-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavePaymentMethodBankCard'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '429':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Способы оплаты
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentMethodRequest'
+  /payment_methods/{payment_method_id}:
+    get:
+      operationId: PaymentMethods_retrieve
+      description: Информация о способе оплаты
+      parameters:
+        - name: payment_method_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PaymentMethodId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavePaymentMethodBankCard'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '429':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Способы оплаты
+  /payments:
+    post:
+      operationId: Payments_create
+      description: Создание платежа
+      parameters:
+        - name: Idempotence-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Платежи
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentRequest'
+    get:
+      operationId: Payments_list
+      description: Список платежей
+      parameters:
+        - name: created_at.gte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.gt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.lte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.lt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: captured_at.gte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: captured_at.gt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: captured_at.lte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: captured_at.lt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: payment_method
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/PaymentMethodType'
+          explode: false
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/PaymentStatus'
+          explode: false
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 10
+          explode: false
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentList'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Платежи
+  /payments/{payment_id}:
+    get:
+      operationId: Payments_retrieve
+      description: Информация о платеже
+      parameters:
+        - name: payment_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PaymentId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Платежи
+  /payments/{payment_id}/cancel:
+    post:
+      operationId: Payments_cancel
+      description: Отмена платежа
+      parameters:
+        - name: payment_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PaymentId'
+        - name: Idempotence-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Платежи
+  /payments/{payment_id}/capture:
+    post:
+      operationId: Payments_capture
+      description: Подтверждение платежа
+      parameters:
+        - name: payment_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PaymentId'
+        - name: Idempotence-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Платежи
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCaptureRequest'
+  /payouts:
+    post:
+      operationId: Payouts_create
+      description: Создание выплаты
+      parameters:
+        - name: Idempotence-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payout'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '429':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Выплаты
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayoutRequest'
+    get:
+      operationId: Payouts_list
+      description: Список выплат
+      parameters:
+        - name: created_at.gte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.gt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.lte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.lt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: payout_destination.type
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/PayoutDestinationType'
+          explode: false
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/PayoutStatus'
+          explode: false
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 10
+          explode: false
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayoutsList'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '429':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Выплаты
+  /payouts/search:
+    get:
+      operationId: Payouts_search
+      description: Поиск выплат по метаданным
+      parameters:
+        - name: created_at.gte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.gt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.lte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.lt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 10
+          explode: false
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayoutsList'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '429':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Выплаты
+  /payouts/{payout_id}:
+    get:
+      operationId: Payouts_retrieve
+      description: Информация о выплате
+      parameters:
+        - name: payout_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PayoutId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payout'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '429':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Выплаты
+  /personal_data:
+    post:
+      operationId: PersonalDataResource_create
+      description: Создание персональных данных
+      parameters:
+        - name: Idempotence-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalData'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '429':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Персональные данные
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - $ref: '#/components/schemas/SbpPayoutRecipientPersonalDataRequest'
+                - $ref: '#/components/schemas/PayoutStatementRecipientPersonalDataRequest'
+  /personal_data/{personal_data_id}:
+    get:
+      operationId: PersonalDataResource_retrieve
+      description: Информация о персональных данных
+      parameters:
+        - name: personal_data_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PersonalDataId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalData'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '429':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Персональные данные
+  /receipts:
+    post:
+      operationId: Receipts_create
+      description: Создание чека
+      parameters:
+        - name: Idempotence-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Чеки
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostReceiptData'
+    get:
+      operationId: Receipts_list
+      description: Список чеков
+      parameters:
+        - name: created_at.gte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.gt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.lte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.lt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ReceiptRegistrationStatus'
+          explode: false
+        - name: payment_id
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/PaymentId'
+          explode: false
+        - name: refund_id
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/RefundId'
+          explode: false
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 10
+          explode: false
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptList'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Чеки
+  /receipts/{receipt_id}:
+    get:
+      operationId: Receipts_retrieve
+      description: Информация о чеке
+      parameters:
+        - name: receipt_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ReceiptId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Чеки
+  /refunds:
+    post:
+      operationId: Refunds_create
+      description: Создание возврата
+      parameters:
+        - name: Idempotence-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Refund'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Возвраты
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRefundRequest'
+    get:
+      operationId: Refunds_list
+      description: Список возвратов
+      parameters:
+        - name: created_at.gte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.gt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.lte
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: created_at.lt
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: payment_id
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/PaymentId'
+          explode: false
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/RefundStatus'
+          explode: false
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 10
+          explode: false
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefundList'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Возвраты
+  /refunds/{refund_id}:
+    get:
+      operationId: Refunds_retrieve
+      description: Информация о возврате
+      parameters:
+        - name: refund_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/RefundId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Refund'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Возвраты
+  /sbp_banks:
+    get:
+      operationId: SbpBanks_list
+      description: Список участников СБП
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SbpBanksList'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '429':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Участники СБП
+  /webhooks:
+    post:
+      operationId: Webhooks_create
+      description: Создание webhook
+      parameters:
+        - name: Idempotence-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Webhooks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWebhookRequest'
+    get:
+      operationId: Webhooks_list
+      description: Список webhook
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookList'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Webhooks
+  /webhooks/{webhook_id}:
+    delete:
+      operationId: Webhooks_remove
+      description: Удаление webhook
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TooManyRequests'
+      tags:
+        - Webhooks
+security:
+  - BasicAuth: []
+  - OAuth2Auth:
+      - checkout:payments_create
+      - checkout:payments_capture
+      - checkout:payments_cancel
+      - checkout:payments_get
+      - checkout:refunds_create
+      - checkout:refunds_get
+      - checkout:receipts_get
+      - checkout:get_fees
+components:
+  schemas:
+    AccountId:
+      type: string
+    Airline:
+      type: object
+      properties:
+        ticket_number:
+          type: string
+        booking_reference:
+          type: string
+        passengers:
+          type: array
+          items:
+            $ref: '#/components/schemas/AirlinePassenger'
+        legs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AirlineLeg'
+    AirlineLeg:
+      type: object
+      required:
+        - departure_airport
+        - destination_airport
+        - departure_date
+      properties:
+        departure_airport:
+          type: string
+        destination_airport:
+          type: string
+        departure_date:
+          type: string
+        carrier_code:
+          type: string
+    AirlinePassenger:
+      type: object
+      required:
+        - first_name
+        - last_name
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+    AuthorizationDetails:
+      type: object
+      required:
+        - three_d_secure
+      properties:
+        rrn:
+          $ref: '#/components/schemas/Rrn'
+        auth_code:
+          type: string
+        three_d_secure:
+          $ref: '#/components/schemas/ThreeDSecureDetails'
+    B2bSberbankCalculatedVatData:
+      type: object
+      required:
+        - rate
+        - amount
+      properties:
+        rate:
+          type: string
+          description: Налоговая ставка (в процентах).
+        amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма НДС.
+      allOf:
+        - $ref: '#/components/schemas/B2bSberbankVatData'
+    B2bSberbankMixedVatData:
+      type: object
+      required:
+        - amount
+      properties:
+        amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма НДС.
+      allOf:
+        - $ref: '#/components/schemas/B2bSberbankVatData'
+    B2bSberbankPayerBankDetails:
+      type: object
+      required:
+        - full_name
+        - short_name
+        - address
+        - inn
+        - bank_name
+        - bank_branch
+        - bank_bik
+        - account
+      properties:
+        full_name:
+          type: string
+        short_name:
+          type: string
+        address:
+          type: string
+        inn:
+          type: string
+        bank_name:
+          type: string
+        bank_branch:
+          type: string
+        bank_bik:
+          type: string
+        account:
+          type: string
+        kpp:
+          type: string
+    B2bSberbankUntaxedVatData:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/B2bSberbankVatData'
+    B2bSberbankVatData:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          $ref: '#/components/schemas/B2bSberbankVatDataType'
+    B2bSberbankVatDataType:
+      type: string
+      enum:
+        - calculated
+        - untaxed
+        - mixed
+    BadRequest:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Error'
+    BankCardData:
+      type: object
+      required:
+        - last4
+        - expiry_year
+        - expiry_month
+        - card_type
+      properties:
+        first6:
+          $ref: '#/components/schemas/BankCardFirst6'
+        last4:
+          $ref: '#/components/schemas/BankCardLast4'
+        expiry_year:
+          $ref: '#/components/schemas/BankCardExpiryYear'
+        expiry_month:
+          $ref: '#/components/schemas/BankCardExpiryMonth'
+        card_type:
+          $ref: '#/components/schemas/BankCardType'
+        card_product:
+          $ref: '#/components/schemas/BankCardProduct'
+        issuer_country:
+          $ref: '#/components/schemas/BankCardIssuerCountry'
+        issuer_name:
+          $ref: '#/components/schemas/BankCardIssuerName'
+        source:
+          $ref: '#/components/schemas/BankCardDataSource'
+    BankCardDataSource:
+      type: string
+      enum:
+        - apple_pay
+        - google_pay
+        - mir_pay
+    BankCardExpiryMonth:
+      type: string
+    BankCardExpiryYear:
+      type: string
+    BankCardFirst6:
+      type: string
+    BankCardHolderName:
+      type: string
+    BankCardIssuerCountry:
+      type: string
+    BankCardIssuerName:
+      type: string
+    BankCardLast4:
+      type: string
+    BankCardProduct:
+      type: object
+      required:
+        - code
+      properties:
+        code:
+          type: string
+          description: Код продукта.
+        name:
+          type: string
+          description: Название продукта.
+    BankCardType:
+      type: string
+      enum:
+        - MasterCard
+        - Visa
+        - Mir
+        - UnionPay
+        - JCB
+        - AmericanExpress
+        - DinersClub
+        - DiscoverCard
+        - InstaPayment
+        - InstaPaymentTM
+        - Laser
+        - Dankort
+        - Solo
+        - Switch
+        - Unknown
+    BaseDeal:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/DealType'
+          description: Тип сделки.
+    BasketId:
+      type: string
+    CardDataForPayoutDestination:
+      type: object
+      required:
+        - number
+      properties:
+        number:
+          type: string
+          description: Номер банковской карты.
+    CardRequestData:
+      type: object
+      required:
+        - number
+        - expiry_year
+        - expiry_month
+      properties:
+        number:
+          type: string
+          description: Номер банковской карты.
+        expiry_year:
+          type: string
+          description: 'Срок действия, год. Формат: YYYY.'
+        expiry_month:
+          type: string
+          description: 'Срок действия, месяц. Формат: MM.'
+        cardholder:
+          allOf:
+            - $ref: '#/components/schemas/BankCardHolderName'
+          description: Имя владельца карты.
+    CardRequestDataWithCsc:
+      type: object
+      properties:
+        csc:
+          type: string
+          description: Код CVC2 или CVV2, 3 или 4 символа, печатается на обратной стороне карты.
+      allOf:
+        - $ref: '#/components/schemas/CardRequestData'
+    ClientIp:
+      type: string
+    Confirmation:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/ConfirmationType'
+          description: Код сценария подтверждения.
+    ConfirmationData:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/ConfirmationDataType'
+          description: Код сценария подтверждения.
+        locale:
+          allOf:
+            - $ref: '#/components/schemas/Locale'
+          description: Язык интерфейса, писем и смс.
+    ConfirmationDataEmbedded:
+      type: object
+      properties:
+        locale:
+          allOf:
+            - $ref: '#/components/schemas/Locale'
+          description: Язык интерфейса.
+      allOf:
+        - $ref: '#/components/schemas/ConfirmationData'
+    ConfirmationDataExternal:
+      type: object
+      properties:
+        locale:
+          allOf:
+            - $ref: '#/components/schemas/Locale'
+          description: Язык интерфейса.
+      allOf:
+        - $ref: '#/components/schemas/ConfirmationData'
+    ConfirmationDataMobileApplication:
+      type: object
+      required:
+        - return_url
+      properties:
+        return_url:
+          allOf:
+            - $ref: '#/components/schemas/ReturnUrl'
+          description: URL, на который необходимо перенаправить пользователя после оплаты.
+      allOf:
+        - $ref: '#/components/schemas/ConfirmationData'
+    ConfirmationDataQr:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ConfirmationData'
+    ConfirmationDataRedirect:
+      type: object
+      required:
+        - return_url
+      properties:
+        enforce:
+          type: boolean
+          description: Требование пройти аутентификацию при оплате банковской картой по 3-D Secure.
+        return_url:
+          allOf:
+            - $ref: '#/components/schemas/ReturnUrl'
+          description: URL, на который необходимо перенаправить пользователя после оплаты.
+      allOf:
+        - $ref: '#/components/schemas/ConfirmationData'
+    ConfirmationDataType:
+      type: string
+      enum:
+        - redirect
+        - external
+        - qr
+        - embedded
+        - mobile_application
+    ConfirmationEmbedded:
+      type: object
+      properties:
+        confirmation_token:
+          type: string
+          description: Токен для инициализации платежного виджета ЮKassa.
+      allOf:
+        - $ref: '#/components/schemas/Confirmation'
+    ConfirmationExternal:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Confirmation'
+    ConfirmationMobileApplication:
+      type: object
+      properties:
+        confirmation_url:
+          allOf:
+            - $ref: '#/components/schemas/ConfirmationUrl'
+          description: Ссылка для перенаправления пользователя в мобильное приложение.
+      allOf:
+        - $ref: '#/components/schemas/Confirmation'
+    ConfirmationQr:
+      type: object
+      properties:
+        confirmation_url:
+          $ref: '#/components/schemas/ConfirmationUrl'
+      allOf:
+        - $ref: '#/components/schemas/Confirmation'
+    ConfirmationRedirect:
+      type: object
+      required:
+        - confirmation_url
+      properties:
+        enforce:
+          type: boolean
+        return_url:
+          $ref: '#/components/schemas/ReturnUrl'
+        confirmation_url:
+          $ref: '#/components/schemas/ConfirmationUrl'
+      allOf:
+        - $ref: '#/components/schemas/Confirmation'
+    ConfirmationType:
+      type: string
+      enum:
+        - redirect
+        - external
+        - qr
+        - embedded
+        - mobile_application
+    ConfirmationUrl:
+      type: string
+    CreateInvoiceRequest:
+      type: object
+      required:
+        - cart
+        - delivery_method
+      properties:
+        cart:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+          description: Корзина заказа — список товаров или услуг.
+        delivery_method:
+          anyOf:
+            - $ref: '#/components/schemas/DeliveryMethodDataSelf'
+            - $ref: '#/components/schemas/DeliveryMethodDataSms'
+            - $ref: '#/components/schemas/DeliveryMethodDataEmail'
+          description: Способ доставки ссылки на счет.
+        payment_data:
+          allOf:
+            - $ref: '#/components/schemas/PaymentData'
+          description: Данные платежа.
+        expires_at:
+          type: string
+          format: date-time
+          description: Срок действия счета.
+        description:
+          allOf:
+            - $ref: '#/components/schemas/Description'
+          description: Описание заказа.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    CreatePaymentMethodRequest:
+      type: object
+      required:
+        - type
+        - payment_method_data
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/SavePaymentMethodType'
+          description: Тип способа оплаты.
+        payment_method_data:
+          allOf:
+            - $ref: '#/components/schemas/SavePaymentMethodDataBankCard'
+          description: Данные для проверки и сохранения способа оплаты.
+        payment_data:
+          allOf:
+            - $ref: '#/components/schemas/PaymentData'
+          description: Данные платежа, который будет создан после сохранения способа оплаты.
+        receipt:
+          allOf:
+            - $ref: '#/components/schemas/ReceiptData'
+          description: Данные для формирования чека.
+    CreatePaymentRequest:
+      type: object
+      required:
+        - amount
+      properties:
+        amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма платежа.
+        description:
+          allOf:
+            - $ref: '#/components/schemas/Description'
+          description: Описание транзакции.
+        receipt:
+          allOf:
+            - $ref: '#/components/schemas/ReceiptData'
+          description: Данные для формирования чека.
+        recipient:
+          allOf:
+            - $ref: '#/components/schemas/Recipient'
+          description: Получатель платежа.
+        payment_token:
+          allOf:
+            - $ref: '#/components/schemas/PaymentToken'
+          description: Одноразовый токен для оплаты банковской картой.
+        payment_method_id:
+          allOf:
+            - $ref: '#/components/schemas/PaymentMethodId'
+          description: Идентификатор сохраненного способа оплаты.
+        payment_method_data:
+          anyOf:
+            - $ref: '#/components/schemas/PaymentMethodDataBankCard'
+            - $ref: '#/components/schemas/PaymentMethodDataCash'
+            - $ref: '#/components/schemas/PaymentMethodDataSberbank'
+            - $ref: '#/components/schemas/PaymentMethodDataTinkoffBank'
+            - $ref: '#/components/schemas/PaymentMethodDataYooMoney'
+            - $ref: '#/components/schemas/PaymentMethodDataMobileBalance'
+            - $ref: '#/components/schemas/PaymentMethodDataB2bSberbank'
+            - $ref: '#/components/schemas/PaymentMethodDataSbp'
+            - $ref: '#/components/schemas/PaymentMethodDataSberLoan'
+            - $ref: '#/components/schemas/PaymentMethodDataElectronicCertificate'
+            - $ref: '#/components/schemas/PaymentMethodDataSberBnpl'
+          description: Данные для оплаты конкретным способом.
+        confirmation:
+          anyOf:
+            - $ref: '#/components/schemas/ConfirmationDataRedirect'
+            - $ref: '#/components/schemas/ConfirmationDataExternal'
+            - $ref: '#/components/schemas/ConfirmationDataQr'
+            - $ref: '#/components/schemas/ConfirmationDataEmbedded'
+            - $ref: '#/components/schemas/ConfirmationDataMobileApplication'
+          description: Данные, необходимые для инициирования выбранного сценария подтверждения платежа пользователем.
+        save_payment_method:
+          type: boolean
+          description: Сохранение платежных данных.
+        capture:
+          type: boolean
+          description: Автоматический прием поступившего платежа.
+        client_ip:
+          allOf:
+            - $ref: '#/components/schemas/ClientIp'
+          description: IPv4 или IPv6-адрес пользователя.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        airline:
+          allOf:
+            - $ref: '#/components/schemas/Airline'
+          description: Данные для продажи авиабилетов.
+        transfers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferDataPayment'
+          description: Данные о распределении денег.
+        deal:
+          allOf:
+            - $ref: '#/components/schemas/PaymentDealInfo'
+          description: Данные о сделке.
+        merchant_customer_id:
+          allOf:
+            - $ref: '#/components/schemas/MerchantCustomerId'
+          description: Идентификатор покупателя в вашей системе.
+        payment_order:
+          allOf:
+            - $ref: '#/components/schemas/PaymentOrderDataUtilities'
+          description: Данные платежного поручения.
+        receiver:
+          anyOf:
+            - $ref: '#/components/schemas/ReceiverMobileBalance'
+            - $ref: '#/components/schemas/ReceiverDigitalWallet'
+            - $ref: '#/components/schemas/ReceiverBankAccount'
+          description: Получатель перевода.
+        statements:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentOverviewStatementData'
+          description: Данные для отправки справки.
+    CreateRefundRequest:
+      type: object
+      required:
+        - payment_id
+        - amount
+      properties:
+        payment_id:
+          allOf:
+            - $ref: '#/components/schemas/PaymentId'
+          description: Идентификатор платежа для возврата.
+        amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма возврата.
+        description:
+          allOf:
+            - $ref: '#/components/schemas/Description'
+          description: Описание возврата.
+        receipt:
+          allOf:
+            - $ref: '#/components/schemas/ReceiptData'
+          description: Данные для формирования чека.
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/RefundSourcesData'
+          description: Источники для возврата.
+        deal:
+          allOf:
+            - $ref: '#/components/schemas/RefundDealData'
+          description: Данные о сделке.
+        refund_method_data:
+          allOf:
+            - $ref: '#/components/schemas/ElectronicCertificateRefundMethodData'
+          description: Данные о способе возврата.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    CreateWebhookRequest:
+      type: object
+      required:
+        - event
+        - url
+      properties:
+        event:
+          allOf:
+            - $ref: '#/components/schemas/NotificationEventType'
+          description: Событие, о котором нужно уведомить.
+        url:
+          type: string
+          description: URL для уведомлений.
+    CurrencyCode:
+      type: string
+      enum:
+        - RUB
+        - EUR
+        - USD
+        - KZT
+        - BYN
+        - UAH
+        - UZS
+        - TRY
+        - INR
+        - MDL
+        - AZN
+        - AMD
+    DealId:
+      type: string
+    DealList:
+      type: object
+      required:
+        - type
+        - items
+      properties:
+        type:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SafeDeal'
+        next_cursor:
+          $ref: '#/components/schemas/NextCursor'
+    DealStatus:
+      type: string
+      enum:
+        - opened
+        - closed
+    DealType:
+      type: string
+      enum:
+        - safe_deal
+    DeliveryMethod:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          description: Тип способа доставки.
+    DeliveryMethodData:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          description: Тип способа доставки.
+    DeliveryMethodDataEmail:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          allOf:
+            - $ref: '#/components/schemas/Email'
+          description: Электронная почта для отправки ссылки на счет.
+      allOf:
+        - $ref: '#/components/schemas/DeliveryMethodData'
+    DeliveryMethodDataSelf:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/DeliveryMethodData'
+    DeliveryMethodDataSms:
+      type: object
+      required:
+        - phone
+      properties:
+        phone:
+          allOf:
+            - $ref: '#/components/schemas/Phone'
+          description: Номер телефона для отправки смс.
+      allOf:
+        - $ref: '#/components/schemas/DeliveryMethodData'
+    DeliveryMethodEmail:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/DeliveryMethod'
+    DeliveryMethodSelf:
+      type: object
+      properties:
+        url:
+          type: string
+          maxLength: 2048
+          description: URL страницы счета.
+      allOf:
+        - $ref: '#/components/schemas/DeliveryMethod'
+    DeliveryMethodSms:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/DeliveryMethod'
+    Description:
+      type: string
+    ElectronicCertificate:
+      type: object
+      required:
+        - certificate_id
+        - tru_quantity
+        - available_compensation
+        - applied_compensation
+      properties:
+        certificate_id:
+          type: string
+        tru_quantity:
+          type: integer
+          format: int32
+        available_compensation:
+          $ref: '#/components/schemas/MonetaryAmount'
+        applied_compensation:
+          $ref: '#/components/schemas/MonetaryAmount'
+    ElectronicCertificateApprovedPaymentArticle:
+      type: object
+      required:
+        - article_number
+        - tru_code
+        - certificates
+      properties:
+        article_number:
+          type: integer
+          format: int32
+        tru_code:
+          type: string
+        article_code:
+          type: string
+        certificates:
+          type: array
+          items:
+            $ref: '#/components/schemas/ElectronicCertificate'
+    ElectronicCertificateArticle:
+      type: object
+      required:
+        - article_number
+        - tru_code
+        - article_name
+        - quantity
+        - price
+      properties:
+        article_number:
+          type: integer
+          format: int32
+        tru_code:
+          type: string
+        article_code:
+          type: string
+        article_name:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+        price:
+          $ref: '#/components/schemas/MonetaryAmount'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    ElectronicCertificatePayment:
+      type: object
+      required:
+        - amount
+        - basket_id
+      properties:
+        amount:
+          $ref: '#/components/schemas/MonetaryAmount'
+        basket_id:
+          $ref: '#/components/schemas/BasketId'
+    ElectronicCertificatePaymentData:
+      type: object
+      required:
+        - amount
+        - basket_id
+      properties:
+        amount:
+          $ref: '#/components/schemas/MonetaryAmount'
+        basket_id:
+          $ref: '#/components/schemas/BasketId'
+    ElectronicCertificateRefundArticle:
+      type: object
+      required:
+        - article_number
+        - payment_article_number
+        - tru_code
+        - quantity
+      properties:
+        article_number:
+          type: integer
+          format: int32
+        payment_article_number:
+          type: integer
+          format: int32
+        tru_code:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+    ElectronicCertificateRefundDataRequest:
+      type: object
+      required:
+        - amount
+        - basket_id
+      properties:
+        amount:
+          $ref: '#/components/schemas/MonetaryAmount'
+        basket_id:
+          $ref: '#/components/schemas/BasketId'
+    ElectronicCertificateRefundDataResponse:
+      type: object
+      required:
+        - basket_id
+        - amount
+      properties:
+        basket_id:
+          $ref: '#/components/schemas/BasketId'
+        amount:
+          $ref: '#/components/schemas/MonetaryAmount'
+    ElectronicCertificateRefundMethod:
+      type: object
+      properties:
+        electronic_certificate:
+          $ref: '#/components/schemas/ElectronicCertificateRefundDataResponse'
+        articles:
+          type: array
+          items:
+            $ref: '#/components/schemas/ElectronicCertificateRefundArticle'
+      allOf:
+        - $ref: '#/components/schemas/RefundMethod'
+    ElectronicCertificateRefundMethodData:
+      type: object
+      properties:
+        electronic_certificate:
+          $ref: '#/components/schemas/ElectronicCertificateRefundDataRequest'
+        articles:
+          type: array
+          items:
+            $ref: '#/components/schemas/ElectronicCertificateRefundArticle'
+      allOf:
+        - $ref: '#/components/schemas/RefundMethodData'
+    Email:
+      type: string
+      format: email
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Тип ошибки.
+        id:
+          type: string
+          description: Идентификатор ошибки.
+        description:
+          type: string
+          description: Описание ошибки.
+        parameter:
+          type: string
+          description: Параметр, в котором произошла ошибка.
+        retry_after:
+          type: integer
+          description: Время в секундах, через которое можно повторить запрос.
+      description: Объект ошибки.
+    FeeMoment:
+      type: string
+      enum:
+        - payment_succeeded
+        - deal_closed
+    FirstName:
+      type: string
+    FiscalizationData:
+      type: object
+      required:
+        - enabled
+        - provider
+      properties:
+        enabled:
+          type: boolean
+        provider:
+          $ref: '#/components/schemas/FiscalizationProvider'
+    FiscalizationProvider:
+      type: string
+      enum:
+        - atol
+        - avanpost
+        - a_qsi
+        - business_ru
+        - digital_kassa
+        - evotor
+        - first_ofd
+        - kit_invest
+        - komtet
+        - life_pay
+        - mertrade
+        - modul_kassa
+        - rocket
+        - shtrih_m
+    Forbidden:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Error'
+    GatewayId:
+      type: string
+    GlobalItn:
+      type: string
+    Gone:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Error'
+    IncomeReceipt:
+      type: object
+      required:
+        - service_name
+      properties:
+        service_name:
+          $ref: '#/components/schemas/IncomeReceiptServiceName'
+        npd_receipt_id:
+          $ref: '#/components/schemas/NpdIncomeReceiptId'
+        url:
+          $ref: '#/components/schemas/IncomeReceiptUrl'
+        amount:
+          $ref: '#/components/schemas/MonetaryAmount'
+    IncomeReceiptServiceName:
+      type: string
+    IncomeReceiptUrl:
+      type: string
+    IndustryDetails:
+      type: object
+      required:
+        - federal_id
+        - document_date
+        - document_number
+        - value
+      properties:
+        federal_id:
+          type: string
+        document_date:
+          type: string
+        document_number:
+          type: string
+        value:
+          type: string
+    InvalidCredentials:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Error'
+    Invoice:
+      type: object
+      required:
+        - id
+        - status
+        - cart
+        - created_at
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/InvoiceId'
+          description: Идентификатор счета.
+        status:
+          allOf:
+            - $ref: '#/components/schemas/InvoiceStatus'
+          description: Статус счета.
+        cart:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+          description: Корзина заказа — список товаров или услуг.
+        delivery_method:
+          anyOf:
+            - $ref: '#/components/schemas/DeliveryMethodSelf'
+            - $ref: '#/components/schemas/DeliveryMethodSms'
+            - $ref: '#/components/schemas/DeliveryMethodEmail'
+          description: Способ доставки ссылки на счет.
+        payment_details:
+          allOf:
+            - $ref: '#/components/schemas/PaymentDetails'
+          description: Данные о платеже по счету.
+        created_at:
+          type: string
+          format: date-time
+          description: Время создания счета.
+        expires_at:
+          type: string
+          format: date-time
+          description: Срок действия счета.
+        description:
+          allOf:
+            - $ref: '#/components/schemas/Description'
+          description: Описание счета.
+        cancellation_details:
+          allOf:
+            - $ref: '#/components/schemas/InvoiceCancellationDetails'
+          description: Комментарий к статусу canceled.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    InvoiceCancellationDetails:
+      type: object
+      required:
+        - party
+        - reason
+      properties:
+        party:
+          type: string
+        reason:
+          type: string
+    InvoiceId:
+      type: string
+    InvoiceStatus:
+      type: string
+      enum:
+        - pending
+        - succeeded
+        - canceled
+    InvoicingBankCardData:
+      type: object
+      required:
+        - first6
+        - last4
+        - expiry_year
+        - expiry_month
+        - card_type
+      properties:
+        first6:
+          $ref: '#/components/schemas/BankCardFirst6'
+        last4:
+          $ref: '#/components/schemas/BankCardLast4'
+        expiry_year:
+          $ref: '#/components/schemas/BankCardExpiryYear'
+        expiry_month:
+          $ref: '#/components/schemas/BankCardExpiryMonth'
+        card_type:
+          $ref: '#/components/schemas/BankCardType'
+    Kbk:
+      type: string
+    LastName:
+      type: string
+    LineItem:
+      type: object
+      required:
+        - description
+        - price
+        - quantity
+      properties:
+        description:
+          type: string
+          description: Описание товара или услуги.
+        price:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Цена товара или услуги.
+        discount_price:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Цена со скидкой.
+        quantity:
+          type: integer
+          format: int32
+          description: Количество.
+    Locale:
+      type: string
+      enum:
+        - ru_RU
+        - en_US
+    MarkCodeInfo:
+      type: object
+      properties:
+        mark_code_raw:
+          type: string
+        unknown:
+          type: string
+        ean_8:
+          type: string
+        ean_13:
+          type: string
+        itf_14:
+          type: string
+        gs_10:
+          type: string
+        gs_1m:
+          type: string
+        short:
+          type: string
+        fur:
+          type: string
+        egais_20:
+          type: string
+        egais_30:
+          type: string
+    MarkMode:
+      type: string
+    MarkQuantity:
+      type: object
+      required:
+        - numerator
+        - denominator
+      properties:
+        numerator:
+          type: integer
+          format: int32
+        denominator:
+          type: integer
+          format: int32
+    Me:
+      type: object
+      required:
+        - account_id
+        - status
+        - test
+      properties:
+        account_id:
+          allOf:
+            - $ref: '#/components/schemas/AccountId'
+          description: Идентификатор аккаунта.
+        status:
+          type: string
+          description: Статус аккаунта.
+        test:
+          type: boolean
+          description: Признак тестового аккаунта.
+        fiscalization:
+          allOf:
+            - $ref: '#/components/schemas/FiscalizationData'
+          description: Данные о фискализации.
+        fiscalization_enabled:
+          type: boolean
+          description: Признак подключенной фискализации.
+        payment_methods:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentMethodType'
+          description: Доступные способы оплаты.
+        itn:
+          allOf:
+            - $ref: '#/components/schemas/GlobalItn'
+          description: ИНН.
+        payout_methods:
+          type: array
+          items:
+            $ref: '#/components/schemas/PayoutMethodType'
+          description: Способы выплат.
+        name:
+          type: string
+          description: Название магазина.
+        payout_balance:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Баланс для выплат.
+    MerchantCustomerId:
+      type: string
+    Metadata:
+      type: object
+      additionalProperties:
+        type: string
+      description: 'Любые дополнительные данные, которые нужны вам для работы (например, номер заказа). Передаются в виде набора пар «ключ-значение» и возвращаются в ответе от ЮKassa. Ограничения: максимум 16 ключей, имя ключа не больше 32 символов, значение ключа не больше 512 символов, тип данных — строка в формате UTF-8.'
+    MiddleName:
+      type: string
+    MonetaryAmount:
+      type: object
+      required:
+        - value
+        - currency
+      properties:
+        value:
+          type: string
+          description: Сумма в выбранной валюте. Выражается в виде строки и пишется через точку, например 10.00.
+        currency:
+          allOf:
+            - $ref: '#/components/schemas/CurrencyCode'
+          description: Код валюты в формате ISO-4217.
+    NextCursor:
+      type: string
+    NotFound:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Error'
+    NotificationEventType:
+      type: string
+      enum:
+        - payment.waiting_for_capture
+        - payment.succeeded
+        - payment.canceled
+        - refund.succeeded
+    NpdIncomeReceiptId:
+      type: string
+    Oktmo:
+      type: string
+    OperationalDetails:
+      type: object
+      required:
+        - operation_id
+        - value
+        - created_at
+      properties:
+        operation_id:
+          type: integer
+          format: int32
+        value:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    Payment:
+      type: object
+      required:
+        - id
+        - status
+        - amount
+        - recipient
+        - created_at
+        - test
+        - paid
+        - refundable
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/PaymentId'
+          description: Идентификатор платежа.
+        status:
+          allOf:
+            - $ref: '#/components/schemas/PaymentStatus'
+          description: Статус платежа.
+        amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма платежа.
+        income_amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма платежа, которую получит магазин.
+        description:
+          allOf:
+            - $ref: '#/components/schemas/Description'
+          description: Описание транзакции.
+        recipient:
+          allOf:
+            - $ref: '#/components/schemas/Recipient'
+          description: Получатель платежа.
+        payment_method:
+          anyOf:
+            - $ref: '#/components/schemas/PaymentMethodBankCard'
+            - $ref: '#/components/schemas/PaymentMethodCash'
+            - $ref: '#/components/schemas/PaymentMethodQiwi'
+            - $ref: '#/components/schemas/PaymentMethodAlfabank'
+            - $ref: '#/components/schemas/PaymentMethodWebmoney'
+            - $ref: '#/components/schemas/PaymentMethodSberbank'
+            - $ref: '#/components/schemas/PaymentMethodTinkoffBank'
+            - $ref: '#/components/schemas/PaymentMethodYooMoney'
+            - $ref: '#/components/schemas/PaymentMethodApplePay'
+            - $ref: '#/components/schemas/PaymentMethodGooglePay'
+            - $ref: '#/components/schemas/PaymentMethodMobileBalance'
+            - $ref: '#/components/schemas/PaymentMethodInstallments'
+            - $ref: '#/components/schemas/PaymentMethodB2bSberbank'
+            - $ref: '#/components/schemas/PaymentMethodWeChat'
+            - $ref: '#/components/schemas/PaymentMethodSbp'
+            - $ref: '#/components/schemas/PaymentMethodSberLoan'
+            - $ref: '#/components/schemas/PaymentMethodElectronicCertificate'
+            - $ref: '#/components/schemas/PaymentMethodSberBnpl'
+          description: Способ оплаты.
+        captured_at:
+          type: string
+          format: date-time
+          description: Время подтверждения платежа.
+        created_at:
+          type: string
+          format: date-time
+          description: Время создания заказа.
+        expires_at:
+          type: string
+          format: date-time
+          description: Время, до которого вы можете бесплатно отменить или подтвердить платеж.
+        confirmation:
+          anyOf:
+            - $ref: '#/components/schemas/ConfirmationRedirect'
+            - $ref: '#/components/schemas/ConfirmationExternal'
+            - $ref: '#/components/schemas/ConfirmationQr'
+            - $ref: '#/components/schemas/ConfirmationEmbedded'
+            - $ref: '#/components/schemas/ConfirmationMobileApplication'
+          description: Выбранный способ подтверждения платежа.
+        test:
+          type: boolean
+          description: Признак тестовой операции.
+        refunded_amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма, возвращенная пользователю.
+        paid:
+          type: boolean
+          description: Признак оплаты заказа.
+        refundable:
+          type: boolean
+          description: Возможность провести возврат по API.
+        receipt_registration:
+          allOf:
+            - $ref: '#/components/schemas/ReceiptRegistrationStatus'
+          description: Статус доставки данных для чека.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        cancellation_details:
+          allOf:
+            - $ref: '#/components/schemas/PaymentCancellationDetails'
+          description: Комментарий к статусу canceled.
+        authorization_details:
+          allOf:
+            - $ref: '#/components/schemas/AuthorizationDetails'
+          description: Данные об авторизации платежа.
+        transfers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transfer'
+          description: Данные о распределении денег.
+        deal:
+          allOf:
+            - $ref: '#/components/schemas/PaymentDealInfo'
+          description: Данные о сделке.
+        merchant_customer_id:
+          allOf:
+            - $ref: '#/components/schemas/MerchantCustomerId'
+          description: Идентификатор покупателя в вашей системе.
+        invoice_details:
+          type: string
+          description: Данные о счете, который оплачивается.
+    PaymentCancellationDetails:
+      type: object
+      required:
+        - party
+        - reason
+      properties:
+        party:
+          type: string
+          description: Участник процесса платежа, принявший решение об отмене.
+        reason:
+          type: string
+          description: Причина отмены платежа.
+    PaymentCaptureRequest:
+      type: object
+      properties:
+        amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Подтверждаемая сумма платежа.
+        receipt:
+          allOf:
+            - $ref: '#/components/schemas/ReceiptData'
+          description: Данные для формирования чека.
+        transfers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransferDataCapture'
+          description: Данные о распределении денег.
+        deal:
+          allOf:
+            - $ref: '#/components/schemas/PaymentDealInfo'
+          description: Данные о сделке.
+        airline:
+          allOf:
+            - $ref: '#/components/schemas/Airline'
+          description: Данные для продажи авиабилетов.
+    PaymentData:
+      type: object
+      required:
+        - amount
+      properties:
+        amount:
+          $ref: '#/components/schemas/MonetaryAmount'
+        receipt:
+          $ref: '#/components/schemas/ReceiptData'
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        save_payment_method:
+          type: boolean
+        capture:
+          type: boolean
+        client_ip:
+          $ref: '#/components/schemas/ClientIp'
+        description:
+          $ref: '#/components/schemas/Description'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    PaymentDealInfo:
+      type: object
+      required:
+        - id
+        - settlements
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/DealId'
+          description: Идентификатор сделки.
+        settlements:
+          type: array
+          items:
+            $ref: '#/components/schemas/SettlementPaymentItem'
+          description: Данные о распределении денег.
+    PaymentDetails:
+      type: object
+      required:
+        - id
+        - status
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+    PaymentId:
+      type: string
+    PaymentList:
+      type: object
+      required:
+        - type
+        - items
+      properties:
+        type:
+          type: string
+          description: Тип списка.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+          description: Список платежей.
+        next_cursor:
+          allOf:
+            - $ref: '#/components/schemas/NextCursor'
+          description: Курсор для получения следующей страницы.
+    PaymentMethod:
+      type: object
+      required:
+        - type
+        - id
+        - saved
+        - status
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/PaymentMethodType'
+          description: Код способа оплаты.
+        id:
+          allOf:
+            - $ref: '#/components/schemas/PaymentMethodId'
+          description: Идентификатор способа оплаты.
+        saved:
+          type: boolean
+          description: Признак сохранения платежных данных.
+        status:
+          allOf:
+            - $ref: '#/components/schemas/PaymentMethodStatus'
+          description: Статус способа оплаты.
+        title:
+          type: string
+          description: Название способа оплаты.
+    PaymentMethodAlfabank:
+      type: object
+      properties:
+        login:
+          type: string
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodApplePay:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodB2bSberbank:
+      type: object
+      properties:
+        payment_purpose:
+          $ref: '#/components/schemas/PaymentPurpose'
+        vat_data:
+          $ref: '#/components/schemas/B2bSberbankVatData'
+        payer_bank_details:
+          $ref: '#/components/schemas/B2bSberbankPayerBankDetails'
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodBankCard:
+      type: object
+      properties:
+        card:
+          $ref: '#/components/schemas/BankCardData'
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodCash:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodData:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/PaymentMethodType'
+          description: Код способа оплаты.
+    PaymentMethodDataB2bSberbank:
+      type: object
+      required:
+        - payment_purpose
+        - vat_data
+      properties:
+        payment_purpose:
+          allOf:
+            - $ref: '#/components/schemas/PaymentPurpose'
+          description: Назначение платежа.
+        vat_data:
+          anyOf:
+            - $ref: '#/components/schemas/B2bSberbankCalculatedVatData'
+            - $ref: '#/components/schemas/B2bSberbankUntaxedVatData'
+            - $ref: '#/components/schemas/B2bSberbankMixedVatData'
+          description: Данные об НДС.
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodData'
+    PaymentMethodDataBankCard:
+      type: object
+      properties:
+        card:
+          $ref: '#/components/schemas/CardRequestDataWithCsc'
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodData'
+    PaymentMethodDataCash:
+      type: object
+      properties:
+        phone:
+          type: string
+          description: Телефон пользователя для смс с кодом платежа.
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodData'
+    PaymentMethodDataElectronicCertificate:
+      type: object
+      properties:
+        electronic_certificate:
+          $ref: '#/components/schemas/ElectronicCertificatePaymentData'
+        articles:
+          type: array
+          items:
+            $ref: '#/components/schemas/ElectronicCertificateArticle'
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodData'
+    PaymentMethodDataMobileBalance:
+      type: object
+      properties:
+        phone:
+          $ref: '#/components/schemas/Phone'
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodData'
+    PaymentMethodDataSberBnpl:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodData'
+    PaymentMethodDataSberLoan:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodData'
+    PaymentMethodDataSberbank:
+      type: object
+      properties:
+        phone:
+          allOf:
+            - $ref: '#/components/schemas/Phone'
+          description: Телефон пользователя.
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodData'
+    PaymentMethodDataSbp:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodData'
+    PaymentMethodDataTinkoffBank:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodData'
+    PaymentMethodDataYooMoney:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodData'
+    PaymentMethodElectronicCertificate:
+      type: object
+      properties:
+        electronic_certificate:
+          $ref: '#/components/schemas/ElectronicCertificatePayment'
+        articles:
+          type: array
+          items:
+            $ref: '#/components/schemas/ElectronicCertificateApprovedPaymentArticle'
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodGooglePay:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodId:
+      type: string
+    PaymentMethodInstallments:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodMobileBalance:
+      type: object
+      properties:
+        phone:
+          $ref: '#/components/schemas/Phone'
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodQiwi:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodSberBnpl:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodSberLoan:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodSberbank:
+      type: object
+      properties:
+        phone:
+          $ref: '#/components/schemas/Phone'
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodSbp:
+      type: object
+      properties:
+        sbp_operation_id:
+          type: string
+          description: Идентификатор операции в СБП (НСПК).
+        payer_bank_details:
+          $ref: '#/components/schemas/SbpPayerBankDetails'
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodStatus:
+      type: string
+      enum:
+        - pending
+        - active
+        - inactive
+    PaymentMethodTinkoffBank:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodType:
+      type: string
+      enum:
+        - bank_card
+        - cash
+        - alfabank
+        - webmoney
+        - wechat
+        - apple_pay
+        - google_pay
+        - qiwi
+        - installments
+        - yoo_money
+        - sberbank
+        - mobile_balance
+        - b2b_sberbank
+        - tinkoff_bank
+        - sbp
+        - sber_loan
+        - electronic_certificate
+        - sber_bnpl
+    PaymentMethodWeChat:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodWebmoney:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodYooMoney:
+      type: object
+      properties:
+        account_number:
+          $ref: '#/components/schemas/YooMoneyAccountNumber'
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethodsConfirmation:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          $ref: '#/components/schemas/PaymentMethodsConfirmationType'
+    PaymentMethodsConfirmationData:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          $ref: '#/components/schemas/PaymentMethodsConfirmationType'
+    PaymentMethodsConfirmationDataRedirect:
+      type: object
+      required:
+        - return_url
+      properties:
+        return_url:
+          $ref: '#/components/schemas/ReturnUrl'
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodsConfirmationData'
+    PaymentMethodsConfirmationRedirect:
+      type: object
+      properties:
+        confirmation_url:
+          $ref: '#/components/schemas/ConfirmationUrl'
+      allOf:
+        - $ref: '#/components/schemas/PaymentMethodsConfirmation'
+    PaymentMethodsConfirmationType:
+      type: string
+      enum:
+        - redirect
+    PaymentOrderBankUtilities:
+      type: object
+      required:
+        - name
+        - bic
+        - account
+        - correspondent_account
+      properties:
+        name:
+          type: string
+        bic:
+          type: string
+        account:
+          type: string
+        correspondent_account:
+          type: string
+    PaymentOrderData:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          description: Тип платежного поручения.
+    PaymentOrderDataUtilities:
+      type: object
+      properties:
+        recipient:
+          allOf:
+            - $ref: '#/components/schemas/PaymentOrderRecipientUtilities'
+          description: Получатель платежа.
+        kbk:
+          allOf:
+            - $ref: '#/components/schemas/Kbk'
+          description: КБК.
+        oktmo:
+          allOf:
+            - $ref: '#/components/schemas/Oktmo'
+          description: ОКТМО.
+        purpose:
+          type: string
+          description: Назначение платежа.
+        payment_period:
+          allOf:
+            - $ref: '#/components/schemas/PaymentPeriod'
+          description: Период оплаты.
+      allOf:
+        - $ref: '#/components/schemas/PaymentOrderData'
+    PaymentOrderRecipientUtilities:
+      type: object
+      required:
+        - name
+        - inn
+        - kpp
+        - bank
+      properties:
+        name:
+          type: string
+        inn:
+          type: string
+        kpp:
+          type: string
+        bank:
+          $ref: '#/components/schemas/PaymentOrderBankUtilities'
+    PaymentOverviewStatementData:
+      type: object
+      required:
+        - delivery_method
+      properties:
+        delivery_method:
+          allOf:
+            - $ref: '#/components/schemas/PaymentOverviewStatementEmailDeliveryMethod'
+          description: Способ доставки справки.
+      allOf:
+        - $ref: '#/components/schemas/Statement'
+    PaymentOverviewStatementDeliveryMethod:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          $ref: '#/components/schemas/PaymentOverviewStatementDeliveryMethodType'
+    PaymentOverviewStatementDeliveryMethodType:
+      type: string
+      enum:
+        - email
+    PaymentOverviewStatementEmailDeliveryMethod:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          allOf:
+            - $ref: '#/components/schemas/Email'
+          description: Электронная почта пользователя для отправки справки.
+      allOf:
+        - $ref: '#/components/schemas/PaymentOverviewStatementDeliveryMethod'
+    PaymentPeriod:
+      type: object
+      required:
+        - month
+        - year
+      properties:
+        month:
+          type: integer
+        year:
+          type: integer
+    PaymentPurpose:
+      type: string
+    PaymentStatus:
+      type: string
+      enum:
+        - pending
+        - waiting_for_capture
+        - succeeded
+        - canceled
+    PaymentToken:
+      type: string
+    Payout:
+      type: object
+      required:
+        - id
+        - amount
+        - status
+        - payout_destination
+        - created_at
+        - test
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/PayoutId'
+          description: Идентификатор выплаты.
+        amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма выплаты.
+        status:
+          allOf:
+            - $ref: '#/components/schemas/PayoutStatus'
+          description: Статус выплаты.
+        payout_destination:
+          anyOf:
+            - $ref: '#/components/schemas/PayoutToCardDestination'
+            - $ref: '#/components/schemas/PayoutToYooMoneyDestination'
+            - $ref: '#/components/schemas/PayoutToSbpDestination'
+          description: Данные о назначении выплаты.
+        description:
+          allOf:
+            - $ref: '#/components/schemas/Description'
+          description: Описание выплаты.
+        created_at:
+          type: string
+          format: date-time
+          description: Время создания выплаты.
+        succeeded_at:
+          type: string
+          format: date-time
+          description: Время проведения выплаты.
+        deal:
+          allOf:
+            - $ref: '#/components/schemas/PayoutDealInfo'
+          description: Данные о сделке.
+        self_employed:
+          allOf:
+            - $ref: '#/components/schemas/PayoutSelfEmployedInfo'
+          description: Данные о самозанятом.
+        receipt:
+          allOf:
+            - $ref: '#/components/schemas/IncomeReceipt'
+          description: Данные о чеке.
+        cancellation_details:
+          allOf:
+            - $ref: '#/components/schemas/PayoutCancellationDetails'
+          description: Детали отмены выплаты.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        test:
+          type: boolean
+          description: Признак тестовой операции.
+    PayoutCancellationDetails:
+      type: object
+      required:
+        - party
+        - reason
+      properties:
+        party:
+          type: string
+        reason:
+          type: string
+    PayoutCardData:
+      type: object
+      required:
+        - first6
+        - last4
+        - card_type
+      properties:
+        first6:
+          $ref: '#/components/schemas/BankCardFirst6'
+        last4:
+          $ref: '#/components/schemas/BankCardLast4'
+        card_type:
+          $ref: '#/components/schemas/BankCardType'
+        issuer_country:
+          $ref: '#/components/schemas/BankCardIssuerCountry'
+        issuer_name:
+          $ref: '#/components/schemas/BankCardIssuerName'
+    PayoutDealInfo:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/DealId'
+          description: Идентификатор сделки.
+    PayoutDestination:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/PayoutDestinationType'
+          description: Тип метода для проведения выплаты.
+    PayoutDestinationData:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/PayoutDestinationDataType'
+          description: Тип метода для проведения выплаты.
+    PayoutDestinationDataType:
+      type: string
+      enum:
+        - yoo_money
+        - bank_card
+        - sbp
+    PayoutDestinationType:
+      type: string
+      enum:
+        - bank_card
+        - yoo_money
+        - sbp
+    PayoutId:
+      type: string
+    PayoutMethodType:
+      type: string
+      enum:
+        - bank_card
+        - yoo_money
+        - sbp
+    PayoutRequest:
+      type: object
+      required:
+        - amount
+      properties:
+        amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма выплаты.
+        payout_destination_data:
+          anyOf:
+            - $ref: '#/components/schemas/PayoutToYooMoneyDestinationData'
+            - $ref: '#/components/schemas/PayoutToBankCardDestinationData'
+            - $ref: '#/components/schemas/PayoutToSbpDestinationData'
+          description: Данные для проведения выплаты.
+        payout_token:
+          type: string
+          description: Токен для проведения выплаты.
+        payment_method_id:
+          allOf:
+            - $ref: '#/components/schemas/PaymentMethodId'
+          description: Идентификатор сохраненного способа оплаты.
+        description:
+          allOf:
+            - $ref: '#/components/schemas/Description'
+          description: Описание выплаты.
+        deal:
+          allOf:
+            - $ref: '#/components/schemas/PayoutDealInfo'
+          description: Данные о сделке.
+        personal_data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PayoutsPersonalData'
+          description: Персональные данные получателя выплаты.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    PayoutSelfEmployedInfo:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          $ref: '#/components/schemas/SelfEmployedId'
+    PayoutStatementRecipientPersonalDataRequest:
+      type: object
+      required:
+        - last_name
+        - first_name
+      properties:
+        last_name:
+          allOf:
+            - $ref: '#/components/schemas/LastName'
+          description: Фамилия.
+        first_name:
+          allOf:
+            - $ref: '#/components/schemas/FirstName'
+          description: Имя.
+        middle_name:
+          allOf:
+            - $ref: '#/components/schemas/MiddleName'
+          description: Отчество.
+      allOf:
+        - $ref: '#/components/schemas/PersonalDataRequest'
+    PayoutStatus:
+      type: string
+      enum:
+        - pending
+        - succeeded
+        - canceled
+    PayoutToBankCardDestinationData:
+      type: object
+      required:
+        - card
+      properties:
+        card:
+          allOf:
+            - $ref: '#/components/schemas/CardDataForPayoutDestination'
+          description: Данные банковской карты.
+      allOf:
+        - $ref: '#/components/schemas/PayoutDestinationData'
+    PayoutToCardDestination:
+      type: object
+      properties:
+        card:
+          $ref: '#/components/schemas/PayoutCardData'
+      allOf:
+        - $ref: '#/components/schemas/PayoutDestination'
+    PayoutToSbpDestination:
+      type: object
+      properties:
+        bank_id:
+          $ref: '#/components/schemas/SbpBankId'
+        phone:
+          $ref: '#/components/schemas/Phone'
+      allOf:
+        - $ref: '#/components/schemas/PayoutDestination'
+    PayoutToSbpDestinationData:
+      type: object
+      required:
+        - bank_id
+        - phone
+      properties:
+        bank_id:
+          allOf:
+            - $ref: '#/components/schemas/SbpBankId'
+          description: Идентификатор банка.
+        phone:
+          allOf:
+            - $ref: '#/components/schemas/Phone'
+          description: Номер телефона.
+      allOf:
+        - $ref: '#/components/schemas/PayoutDestinationData'
+    PayoutToYooMoneyDestination:
+      type: object
+      required:
+        - account_number
+      properties:
+        account_number:
+          $ref: '#/components/schemas/YooMoneyAccountNumber'
+      allOf:
+        - $ref: '#/components/schemas/PayoutDestination'
+    PayoutToYooMoneyDestinationData:
+      type: object
+      required:
+        - account_number
+      properties:
+        account_number:
+          allOf:
+            - $ref: '#/components/schemas/YooMoneyAccountNumber'
+          description: Номер кошелька ЮMoney.
+      allOf:
+        - $ref: '#/components/schemas/PayoutDestinationData'
+    PayoutsList:
+      type: object
+      required:
+        - type
+        - items
+      properties:
+        type:
+          type: string
+          description: Тип списка.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payout'
+          description: Список выплат.
+        next_cursor:
+          allOf:
+            - $ref: '#/components/schemas/NextCursor'
+          description: Курсор для получения следующей страницы.
+    PayoutsPersonalData:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          $ref: '#/components/schemas/PersonalDataId'
+    PersonalData:
+      type: object
+      required:
+        - id
+        - type
+        - status
+        - created_at
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/PersonalDataId'
+          description: Идентификатор персональных данных.
+        type:
+          allOf:
+            - $ref: '#/components/schemas/PersonalDataType'
+          description: Тип персональных данных.
+        status:
+          type: string
+          description: Статус хранения персональных данных.
+        cancellation_details:
+          allOf:
+            - $ref: '#/components/schemas/PersonalDataCancellationDetails'
+          description: Комментарий к статусу canceled.
+        created_at:
+          type: string
+          format: date-time
+          description: Время создания персональных данных.
+        expires_at:
+          type: string
+          format: date-time
+          description: Срок жизни персональных данных.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    PersonalDataCancellationDetails:
+      type: object
+      required:
+        - party
+        - reason
+      properties:
+        party:
+          type: string
+        reason:
+          type: string
+    PersonalDataId:
+      type: string
+    PersonalDataRequest:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/PersonalDataType'
+          description: Тип персональных данных.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    PersonalDataType:
+      type: string
+      enum:
+        - payout_statement_recipient
+        - sbp_payout_recipient
+    Phone:
+      type: string
+    PostReceiptData:
+      type: object
+      required:
+        - type
+        - customer
+        - items
+        - send
+        - settlements
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/ReceiptType'
+          description: Тип чека.
+        payment_id:
+          allOf:
+            - $ref: '#/components/schemas/PaymentId'
+          description: Идентификатор платежа.
+        refund_id:
+          allOf:
+            - $ref: '#/components/schemas/RefundId'
+          description: Идентификатор возврата.
+        customer:
+          allOf:
+            - $ref: '#/components/schemas/ReceiptDataCustomer'
+          description: Данные покупателя.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostReceiptDataItem'
+          description: Позиции чека.
+        internet:
+          type: boolean
+          description: Флаг расчета в интернете.
+        send:
+          type: boolean
+          description: Признак отправки чека пользователю.
+        tax_system_code:
+          type: integer
+          format: int32
+          description: Код системы налогообложения.
+        timezone:
+          type: string
+          description: Часовой пояс.
+        additional_user_props:
+          allOf:
+            - $ref: '#/components/schemas/ReceiptAdditionalUserProps'
+          description: Дополнительный реквизит пользователя.
+        receipt_industry_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndustryDetails'
+          description: Отраслевой реквизит чека.
+        receipt_operational_details:
+          allOf:
+            - $ref: '#/components/schemas/OperationalDetails'
+          description: Операционный реквизит чека.
+        settlements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Settlement'
+          description: Данные расчетов.
+        on_behalf_of:
+          type: string
+          description: Идентификатор магазина.
+    PostReceiptDataItem:
+      type: object
+      properties:
+        additional_payment_subject_props:
+          type: string
+          description: Дополнительный реквизит предмета расчета.
+        supplier:
+          $ref: '#/components/schemas/ReceiptItemSupplierWithInn'
+        agent_type:
+          $ref: '#/components/schemas/ReceiptItemAgentType'
+      allOf:
+        - $ref: '#/components/schemas/ReceiptDataItem'
+    PostReceiptItemSupplierWithInn:
+      type: object
+      properties:
+        inn:
+          $ref: '#/components/schemas/RussianItn'
+      allOf:
+        - $ref: '#/components/schemas/ReceiptItemSupplier'
+    Receipt:
+      type: object
+      required:
+        - id
+        - type
+        - status
+        - items
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/ReceiptId'
+          description: Идентификатор чека.
+        type:
+          allOf:
+            - $ref: '#/components/schemas/ReceiptType'
+          description: Тип чека.
+        payment_id:
+          allOf:
+            - $ref: '#/components/schemas/PaymentId'
+          description: Идентификатор платежа.
+        refund_id:
+          allOf:
+            - $ref: '#/components/schemas/RefundId'
+          description: Идентификатор возврата.
+        status:
+          allOf:
+            - $ref: '#/components/schemas/ReceiptRegistrationStatus'
+          description: Статус регистрации чека.
+        fiscal_document_number:
+          type: string
+          description: Номер фискального документа.
+        fiscal_storage_number:
+          type: string
+          description: Номер фискального накопителя.
+        fiscal_attribute:
+          type: string
+          description: Фискальный признак.
+        registered_at:
+          type: string
+          format: date-time
+          description: Дата и время регистрации чека.
+        fiscal_provider_id:
+          type: string
+          description: Идентификатор провайдера фискализации.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptItem'
+          description: Позиции чека.
+        internet:
+          type: boolean
+          description: Флаг расчета в интернете.
+        settlements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Settlement'
+          description: Данные расчетов.
+        on_behalf_of:
+          type: string
+          description: Идентификатор магазина.
+        tax_system_code:
+          type: integer
+          format: int32
+          description: Код системы налогообложения.
+        timezone:
+          type: string
+          description: Часовой пояс.
+        receipt_industry_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndustryDetails'
+          description: Отраслевой реквизит чека.
+        receipt_operational_details:
+          allOf:
+            - $ref: '#/components/schemas/OperationalDetails'
+          description: Операционный реквизит чека.
+    ReceiptAdditionalUserProps:
+      type: object
+      required:
+        - name
+        - value
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    ReceiptData:
+      type: object
+      required:
+        - items
+      properties:
+        customer:
+          $ref: '#/components/schemas/ReceiptDataCustomer'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptDataItem'
+        internet:
+          type: boolean
+        tax_system_code:
+          type: integer
+          format: int32
+        timezone:
+          type: string
+        receipt_industry_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndustryDetails'
+        receipt_operational_details:
+          $ref: '#/components/schemas/OperationalDetails'
+    ReceiptDataCustomer:
+      type: object
+      properties:
+        full_name:
+          type: string
+        inn:
+          $ref: '#/components/schemas/RussianItn'
+        email:
+          $ref: '#/components/schemas/Email'
+        phone:
+          $ref: '#/components/schemas/Phone'
+    ReceiptDataItem:
+      type: object
+      required:
+        - description
+        - amount
+        - vat_code
+        - quantity
+      properties:
+        description:
+          allOf:
+            - $ref: '#/components/schemas/ReceiptItemDescription'
+          description: Название товара.
+        amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма.
+        vat_code:
+          type: integer
+          format: int32
+          description: Ставка НДС.
+        quantity:
+          type: number
+          format: double
+          description: Количество.
+        measure:
+          $ref: '#/components/schemas/ReceiptItemMeasure'
+        mark_quantity:
+          $ref: '#/components/schemas/MarkQuantity'
+        payment_subject:
+          $ref: '#/components/schemas/ReceiptItemPaymentSubject'
+        payment_mode:
+          $ref: '#/components/schemas/ReceiptItemPaymentMode'
+        country_of_origin_code:
+          $ref: '#/components/schemas/ReceiptItemCountryOfOriginCode'
+        customs_declaration_number:
+          $ref: '#/components/schemas/ReceiptItemCustomsDeclarationNumber'
+        excise:
+          $ref: '#/components/schemas/ReceiptItemExcise'
+        product_code:
+          $ref: '#/components/schemas/ReceiptItemProductCode'
+        planned_status:
+          type: integer
+          format: int32
+        mark_code_info:
+          $ref: '#/components/schemas/MarkCodeInfo'
+        mark_mode:
+          $ref: '#/components/schemas/MarkMode'
+        payment_subject_industry_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndustryDetails'
+    ReceiptId:
+      type: string
+    ReceiptItem:
+      type: object
+      required:
+        - description
+        - quantity
+        - amount
+        - vat_code
+      properties:
+        description:
+          $ref: '#/components/schemas/ReceiptItemDescription'
+        quantity:
+          type: number
+          format: double
+        amount:
+          $ref: '#/components/schemas/MonetaryAmount'
+        vat_code:
+          type: integer
+          format: int32
+        payment_subject:
+          $ref: '#/components/schemas/ReceiptItemPaymentSubject'
+        payment_mode:
+          $ref: '#/components/schemas/ReceiptItemPaymentMode'
+        country_of_origin_code:
+          $ref: '#/components/schemas/ReceiptItemCountryOfOriginCode'
+        customs_declaration_number:
+          $ref: '#/components/schemas/ReceiptItemCustomsDeclarationNumber'
+        excise:
+          $ref: '#/components/schemas/ReceiptItemExcise'
+        supplier:
+          $ref: '#/components/schemas/ReceiptItemSupplierWithInn'
+        agent_type:
+          $ref: '#/components/schemas/ReceiptItemAgentType'
+        mark_code_info:
+          $ref: '#/components/schemas/MarkCodeInfo'
+        measure:
+          $ref: '#/components/schemas/ReceiptItemMeasure'
+        payment_subject_industry_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndustryDetails'
+        product_code:
+          $ref: '#/components/schemas/ReceiptItemProductCode'
+        planned_status:
+          type: integer
+          format: int32
+        mark_mode:
+          $ref: '#/components/schemas/MarkMode'
+        mark_quantity:
+          $ref: '#/components/schemas/MarkQuantity'
+    ReceiptItemAgentType:
+      type: string
+      enum:
+        - banking_payment_agent
+        - banking_payment_subagent
+        - payment_agent
+        - payment_subagent
+        - attorney
+        - commissioner
+        - agent
+    ReceiptItemCountryOfOriginCode:
+      type: string
+    ReceiptItemCustomsDeclarationNumber:
+      type: string
+    ReceiptItemDescription:
+      type: string
+    ReceiptItemExcise:
+      type: string
+    ReceiptItemMeasure:
+      type: string
+      enum:
+        - piece
+        - gram
+        - kilogram
+        - ton
+        - centimeter
+        - decimeter
+        - meter
+        - square_centimeter
+        - square_decimeter
+        - square_meter
+        - milliliter
+        - liter
+        - cubic_meter
+        - kilowatt_hour
+        - gigacalorie
+        - day
+        - hour
+        - minute
+        - second
+        - kilobyte
+        - megabyte
+        - gigabyte
+        - terabyte
+        - another
+    ReceiptItemPaymentMode:
+      type: string
+      enum:
+        - full_prepayment
+        - partial_prepayment
+        - advance
+        - full_payment
+        - partial_payment
+        - credit
+        - credit_payment
+    ReceiptItemPaymentSubject:
+      type: string
+      enum:
+        - commodity
+        - excise
+        - job
+        - service
+        - gambling_bet
+        - gambling_prize
+        - lottery
+        - lottery_prize
+        - intellectual_activity
+        - payment
+        - agent_commission
+        - property_right
+        - non_operating_gain
+        - insurance_premium
+        - sales_tax
+        - resort_fee
+        - composite
+        - another
+        - fine
+        - tax
+        - lien
+        - cost
+        - pension_insurance_without_payouts
+        - pension_insurance_with_payouts
+        - health_insurance_without_payouts
+        - health_insurance_with_payouts
+        - health_insurance
+        - casino
+        - agent_withdrawals
+        - non_marked_excise
+        - marked_excise
+        - marked
+        - non_marked
+    ReceiptItemProductCode:
+      type: string
+    ReceiptItemSupplier:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          $ref: '#/components/schemas/Phone'
+    ReceiptItemSupplierWithInn:
+      type: object
+      properties:
+        inn:
+          $ref: '#/components/schemas/RussianItn'
+      allOf:
+        - $ref: '#/components/schemas/ReceiptItemSupplier'
+    ReceiptList:
+      type: object
+      required:
+        - type
+        - items
+      properties:
+        type:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Receipt'
+        next_cursor:
+          $ref: '#/components/schemas/NextCursor'
+    ReceiptRegistrationStatus:
+      type: string
+      enum:
+        - pending
+        - succeeded
+        - canceled
+    ReceiptType:
+      type: string
+      enum:
+        - payment
+        - refund
+    Receiver:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/ReceiverType'
+          description: Тип получателя.
+    ReceiverBankAccount:
+      type: object
+      required:
+        - account_number
+        - bic
+      properties:
+        account_number:
+          type: string
+          maxLength: 20
+          description: Номер банковского счета.
+        bic:
+          type: string
+          maxLength: 9
+          description: Банковский идентификационный код (БИК) банка.
+      allOf:
+        - $ref: '#/components/schemas/Receiver'
+    ReceiverDigitalWallet:
+      type: object
+      required:
+        - account_number
+      properties:
+        account_number:
+          type: string
+          maxLength: 20
+          description: Идентификатор электронного кошелька для пополнения.
+      allOf:
+        - $ref: '#/components/schemas/Receiver'
+    ReceiverMobileBalance:
+      type: object
+      required:
+        - phone
+      properties:
+        phone:
+          allOf:
+            - $ref: '#/components/schemas/Phone'
+          description: Номер телефона для пополнения.
+      allOf:
+        - $ref: '#/components/schemas/Receiver'
+    ReceiverType:
+      type: string
+      enum:
+        - mobile_balance
+        - digital_wallet
+        - bank_account
+    Recipient:
+      type: object
+      required:
+        - gateway_id
+      properties:
+        gateway_id:
+          allOf:
+            - $ref: '#/components/schemas/GatewayId'
+          description: Идентификатор субаккаунта. Используется для разделения потоков платежей в рамках одного аккаунта.
+    Refund:
+      type: object
+      required:
+        - id
+        - payment_id
+        - status
+        - created_at
+        - amount
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/RefundId'
+          description: Идентификатор возврата.
+        payment_id:
+          allOf:
+            - $ref: '#/components/schemas/PaymentId'
+          description: Идентификатор платежа.
+        status:
+          allOf:
+            - $ref: '#/components/schemas/RefundStatus'
+          description: Статус возврата.
+        cancellation_details:
+          allOf:
+            - $ref: '#/components/schemas/RefundCancellationDetails'
+          description: Комментарий к статусу canceled.
+        receipt_registration:
+          allOf:
+            - $ref: '#/components/schemas/ReceiptRegistrationStatus'
+          description: Статус регистрации чека.
+        created_at:
+          type: string
+          format: date-time
+          description: Время создания возврата.
+        amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма возврата.
+        description:
+          allOf:
+            - $ref: '#/components/schemas/Description'
+          description: Описание возврата.
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/RefundSourcesData'
+          description: Источники средств для возврата.
+        deal:
+          allOf:
+            - $ref: '#/components/schemas/RefundDealInfo'
+          description: Данные о сделке.
+        refund_method:
+          anyOf:
+            - $ref: '#/components/schemas/SbpRefundMethod'
+            - $ref: '#/components/schemas/ElectronicCertificateRefundMethod'
+          description: Способ возврата.
+        refund_authorization_details:
+          allOf:
+            - $ref: '#/components/schemas/RefundAuthorizationDetails'
+          description: Данные об авторизации возврата.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    RefundAuthorizationDetails:
+      type: object
+      properties:
+        rrn:
+          $ref: '#/components/schemas/Rrn'
+    RefundCancellationDetails:
+      type: object
+      required:
+        - party
+        - reason
+      properties:
+        party:
+          type: string
+        reason:
+          type: string
+    RefundDealData:
+      type: object
+      required:
+        - refund_settlements
+      properties:
+        refund_settlements:
+          type: array
+          items:
+            $ref: '#/components/schemas/SettlementRefundItem'
+          description: Данные о распределении денег.
+    RefundDealInfo:
+      type: object
+      required:
+        - id
+        - refund_settlements
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/DealId'
+          description: Идентификатор сделки.
+        refund_settlements:
+          type: array
+          items:
+            $ref: '#/components/schemas/SettlementRefundItem'
+          description: Данные о распределении денег.
+    RefundId:
+      type: string
+    RefundList:
+      type: object
+      required:
+        - type
+        - items
+      properties:
+        type:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Refund'
+        next_cursor:
+          $ref: '#/components/schemas/NextCursor'
+    RefundMethod:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          $ref: '#/components/schemas/RefundMethodType'
+    RefundMethodData:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          $ref: '#/components/schemas/RefundMethodType'
+    RefundMethodType:
+      type: string
+      enum:
+        - sbp
+        - electronic_certificate
+    RefundSourcesData:
+      type: object
+      required:
+        - account_id
+        - amount
+      properties:
+        account_id:
+          allOf:
+            - $ref: '#/components/schemas/AccountId'
+          description: Идентификатор магазина.
+        amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма возврата.
+        platform_fee_amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Комиссия, которую вы удержали при оплате.
+    RefundStatus:
+      type: string
+      enum:
+        - pending
+        - succeeded
+        - canceled
+    ReturnUrl:
+      type: string
+    Rrn:
+      type: string
+    RussianItn:
+      type: string
+    SafeDeal:
+      type: object
+      required:
+        - id
+        - fee_moment
+        - balance
+        - payout_balance
+        - status
+        - created_at
+        - expires_at
+        - test
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/DealId'
+          description: Идентификатор сделки.
+        fee_moment:
+          allOf:
+            - $ref: '#/components/schemas/FeeMoment'
+          description: Момент удержания вознаграждения.
+        description:
+          allOf:
+            - $ref: '#/components/schemas/Description'
+          description: Описание сделки.
+        balance:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Баланс сделки.
+        payout_balance:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма вознаграждения продавца.
+        status:
+          allOf:
+            - $ref: '#/components/schemas/DealStatus'
+          description: Статус сделки.
+        created_at:
+          type: string
+          format: date-time
+          description: Время создания сделки.
+        expires_at:
+          type: string
+          format: date-time
+          description: Время автоматического закрытия сделки.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        test:
+          type: boolean
+          description: Признак тестовой операции.
+      allOf:
+        - $ref: '#/components/schemas/BaseDeal'
+    SafeDealRequest:
+      type: object
+      required:
+        - type
+        - fee_moment
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/DealType'
+          description: Тип сделки.
+        fee_moment:
+          allOf:
+            - $ref: '#/components/schemas/FeeMoment'
+          description: Момент удержания вознаграждения.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        description:
+          allOf:
+            - $ref: '#/components/schemas/Description'
+          description: Описание сделки.
+    SavePaymentMethod:
+      type: object
+      required:
+        - type
+        - id
+        - saved
+        - status
+        - holder
+      properties:
+        type:
+          $ref: '#/components/schemas/SavePaymentMethodType'
+        id:
+          $ref: '#/components/schemas/PaymentMethodId'
+        saved:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/PaymentMethodStatus'
+        holder:
+          $ref: '#/components/schemas/BankCardHolderName'
+        title:
+          type: string
+        confirmation:
+          $ref: '#/components/schemas/PaymentMethodsConfirmationRedirect'
+    SavePaymentMethodBankCard:
+      type: object
+      properties:
+        card:
+          $ref: '#/components/schemas/BankCardData'
+      allOf:
+        - $ref: '#/components/schemas/SavePaymentMethod'
+    SavePaymentMethodData:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          $ref: '#/components/schemas/SavePaymentMethodType'
+        holder:
+          $ref: '#/components/schemas/BankCardHolderName'
+        client_ip:
+          $ref: '#/components/schemas/ClientIp'
+        confirmation:
+          $ref: '#/components/schemas/PaymentMethodsConfirmationDataRedirect'
+    SavePaymentMethodDataBankCard:
+      type: object
+      properties:
+        card:
+          $ref: '#/components/schemas/CardRequestDataWithCsc'
+      allOf:
+        - $ref: '#/components/schemas/SavePaymentMethodData'
+    SavePaymentMethodType:
+      type: string
+      enum:
+        - bank_card
+    SbpBankBic:
+      type: string
+    SbpBankId:
+      type: string
+    SbpBanksList:
+      type: object
+      required:
+        - type
+        - items
+      properties:
+        type:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SbpParticipantBank'
+    SbpParticipantBank:
+      type: object
+      required:
+        - bank_id
+        - name
+        - bic
+      properties:
+        bank_id:
+          allOf:
+            - $ref: '#/components/schemas/SbpBankId'
+          description: Идентификатор участника СБП.
+        name:
+          type: string
+          description: Название участника СБП.
+        bic:
+          allOf:
+            - $ref: '#/components/schemas/SbpBankBic'
+          description: БИК участника СБП.
+    SbpPayerBankDetails:
+      type: object
+      required:
+        - bank_id
+        - bic
+      properties:
+        bank_id:
+          $ref: '#/components/schemas/SbpBankId'
+        bic:
+          $ref: '#/components/schemas/SbpBankBic'
+    SbpPayoutRecipientPersonalDataRequest:
+      type: object
+      required:
+        - last_name
+        - first_name
+      properties:
+        last_name:
+          allOf:
+            - $ref: '#/components/schemas/LastName'
+          description: Фамилия.
+        first_name:
+          allOf:
+            - $ref: '#/components/schemas/FirstName'
+          description: Имя.
+        middle_name:
+          allOf:
+            - $ref: '#/components/schemas/MiddleName'
+          description: Отчество.
+      allOf:
+        - $ref: '#/components/schemas/PersonalDataRequest'
+    SbpRefundMethod:
+      type: object
+      properties:
+        sbp_operation_id:
+          type: string
+          description: Идентификатор операции в СБП (НСПК).
+      allOf:
+        - $ref: '#/components/schemas/RefundMethod'
+    SelfEmployedId:
+      type: string
+    Settlement:
+      type: object
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          description: Тип расчета.
+        amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма расчета.
+    SettlementItemType:
+      type: string
+      enum:
+        - payout
+    SettlementPaymentItem:
+      type: object
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          $ref: '#/components/schemas/SettlementItemType'
+        amount:
+          $ref: '#/components/schemas/MonetaryAmount'
+    SettlementPayoutPayment:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/SettlementPaymentItem'
+    SettlementPayoutRefund:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/SettlementRefundItem'
+    SettlementRefundItem:
+      type: object
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          $ref: '#/components/schemas/SettlementItemType'
+        amount:
+          $ref: '#/components/schemas/MonetaryAmount'
+    Statement:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          description: Тип справки.
+    ThreeDSecureDetails:
+      type: object
+      required:
+        - applied
+      properties:
+        applied:
+          type: boolean
+          description: Отображает, была ли пройдена аутентификация по 3-D Secure.
+    TooManyRequests:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Error'
+    Transfer:
+      type: object
+      required:
+        - account_id
+        - amount
+        - status
+      properties:
+        account_id:
+          allOf:
+            - $ref: '#/components/schemas/AccountId'
+          description: Идентификатор магазина, в пользу которого вы принимаете оплату.
+        amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма, которую необходимо перевести магазину.
+        status:
+          allOf:
+            - $ref: '#/components/schemas/TransferStatus'
+          description: Статус распределения денег.
+        platform_fee_amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Комиссия за проданные товары и оказанные услуги, которую вы удерживаете при оплате.
+        description:
+          type: string
+          description: Описание транзакции.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    TransferData:
+      type: object
+      required:
+        - account_id
+        - amount
+      properties:
+        account_id:
+          allOf:
+            - $ref: '#/components/schemas/AccountId'
+          description: Идентификатор магазина, в пользу которого вы принимаете оплату.
+        amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Сумма, которую необходимо перевести магазину.
+        platform_fee_amount:
+          allOf:
+            - $ref: '#/components/schemas/MonetaryAmount'
+          description: Комиссия за проданные товары и оказанные услуги, которую вы удерживаете при оплате.
+    TransferDataCapture:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TransferData'
+    TransferDataPayment:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Описание транзакции.
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+      allOf:
+        - $ref: '#/components/schemas/TransferData'
+    TransferStatus:
+      type: string
+      enum:
+        - pending
+        - waiting_for_capture
+        - succeeded
+        - canceled
+    Webhook:
+      type: object
+      required:
+        - id
+        - event
+        - url
+      properties:
+        id:
+          type: string
+          description: Идентификатор webhook.
+        event:
+          allOf:
+            - $ref: '#/components/schemas/NotificationEventType'
+          description: Событие, о котором нужно уведомить.
+        url:
+          type: string
+          description: URL для уведомлений.
+    WebhookList:
+      type: object
+      required:
+        - type
+        - items
+      properties:
+        type:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Webhook'
+    YooMoneyAccountNumber:
+      type: string
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: Basic
+    OAuth2Auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://yookassa.ru/oauth/v2/authorize
+          scopes:
+            checkout:payments_create: ''
+            checkout:payments_capture: ''
+            checkout:payments_cancel: ''
+            checkout:payments_get: ''
+            checkout:refunds_create: ''
+            checkout:refunds_get: ''
+            checkout:receipts_get: ''
+            checkout:get_fees: ''
+servers:
+  - url: https://api.yookassa.ru/v3
+    description: Production
+    variables: {}
