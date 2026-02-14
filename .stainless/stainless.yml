@@ -205,12 +205,15 @@ client_settings:
       nullable: true
       auth:
         security_scheme: BasicAuth
-        role: value
+        role: username
       description: HTTP Basic аутентификация клиента ЮKassa (shopId)
       read_env: YOOMONEY_USERNAME
     password:
       type: string
       nullable: true
+      auth:
+        security_scheme: BasicAuth
+        role: password
       description: HTTP Basic аутентификация клиента ЮKassa (секретный ключ)
       read_env: YOOMONEY_PASSWORD
 

@@ -3,6 +3,7 @@ import "@typespec/openapi";
 import "@typespec/openapi3";
 import "@typespec/rest";
 
+import "./auth.tsp";
 import "./models/common.tsp";
 import "./models/errors.tsp";
 import "./models/payment-methods-models.tsp";
@@ -36,21 +37,5 @@ using TypeSpec.Rest;
   version: "1.0.0",
 })
 @server("https://api.yookassa.ru/v3", "Production")
-@useAuth(BasicAuth | OAuth2)
+@useAuth(global.BasicAuth | global.OAuth2)
 namespace YooKassa;
-
-@doc("Авторизация клиента ЮKassa с использованием OAuth-токена")
-model OAuth2 is OAuth2Auth<[{
-  type: OAuth2FlowType.implicit,
-  authorizationUrl: "https://yookassa.ru/oauth/v2/authorize",
-  scopes: [
-    "checkout:payments_create",
-    "checkout:payments_capture",
-    "checkout:payments_cancel",
-    "checkout:payments_get",
-    "checkout:refunds_create",
-    "checkout:refunds_get",
-    "checkout:receipts_get",
-    "checkout:get_fees",
-  ],
-}]>;

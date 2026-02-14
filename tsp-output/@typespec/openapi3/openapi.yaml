@@ -2979,27 +2979,6 @@ components:
         - refund.succeeded
     NpdIncomeReceiptId:
       type: string
-    OAuth2:
-      type: object
-      required:
-        - type
-        - flows
-        - defaultScopes
-      properties:
-        type:
-          type: string
-          enum:
-            - oauth2
-          description: OAuth2 authentication
-        flows:
-          type: array
-          items: {}
-          description: Supported OAuth2 flows
-        defaultScopes:
-          type: array
-          items: {}
-          description: Oauth2 scopes of every flow. Overridden by scope definitions in specific flows
-      description: Авторизация клиента ЮKassa с использованием OAuth-токена
     Oktmo:
       type: string
     OperationalDetails:
@@ -5029,7 +5008,8 @@ components:
   securitySchemes:
     BasicAuth:
       type: http
-      scheme: Basic
+      scheme: basic
+      description: HTTP Basic аутентификация клиента ЮKassa
     OAuth2:
       type: oauth2
       flows:

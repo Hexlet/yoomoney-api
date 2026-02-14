@@ -3,6 +3,9 @@
   "openapi_spec": "../tsp-output/@typespec/openapi3/openapi.yaml",
   "stainless_config": "stainless.yml",
   "targets": {
+    "openapi": {
+      "output_path": "../sdks/yoomoney-openapi"
+    },
     "ruby": {
       "output_path": "../sdks/yoomoney-ruby"
     }
