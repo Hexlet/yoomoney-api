@@ -1,0 +1,13 @@
+{
+  "project": "yoomoney",
+  "openapi_spec": "openapi.json",
+  "stainless_config": "stainless.yml",
+  "targets": {
+    "openapi": {
+      "output_path": "../sdks/yoomoney-openapi"
+    },
+    "ruby": {
+      "output_path": "../sdks/yoomoney-ruby"
+    }
+  }
+}

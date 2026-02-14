@@ -1,0 +1,234 @@
+# yaml-language-server: $schema=https://app.stainless.com/config.schema.json
+
+# The main edition for the config, see the [docs] for more information.
+#
+# [docs]: https://www.stainless.com/docs/reference/editions
+edition: 2026-01-30
+
+organization:
+  # Name of your organization or company, used to determine the name of the client
+  # and headings.
+  name: yoomoney
+  # Link to your API documentation.
+  docs: ''
+  # Contact email for bug reports, questions, and support requests.
+  contact: ''
+
+# `targets` define the output targets and their customization options, such as
+# whether to emit the Node SDK and what its package name should be.
+targets:
+  ruby:
+    # The edition for this target, see the [docs] for more information.
+    #
+    # [docs]: https://www.stainless.com/docs/reference/editions
+    edition: ruby.2025-10-08
+    gem_name: yoomoney
+    production_repo: Hexlet/yoomoney-ruby
+    publish:
+      rubygems: false
+
+# `environments` are a map of the name of the environment (e.g. "sandbox",
+# "production") to the corresponding url to use.
+environments:
+  production: https://api.yookassa.ru/v3
+
+# `resources` define the structure and organization for your API, such as how
+# methods and models are grouped together and accessed. See the [configuration
+# guide] for more information.
+#
+# [configuration guide]: https://www.stainless.com/docs/guides/configure#resources
+resources:
+  payments:
+    # Configure the methods defined in this resource. Each key in the object is the
+    # name of the method and the value is either an endpoint (for example, `get /foo`)
+    # or an object with more detail.
+    #
+    # [reference]: https://www.stainless.com/docs/reference/config#method
+    # Configure the models--named types--defined in the resource. Each key in the
+    # object is the name of the model and the value is either the name of a schema in
+    # `#/components/schemas` or an object with more detail.
+    #
+    # [reference]: https://www.stainless.com/docs/reference/config#model
+    models:
+      monetary_amount: '#/components/schemas/MonetaryAmount'
+      receipt_data: '#/components/schemas/ReceiptData'
+      recipient: '#/components/schemas/Recipient'
+      confirmation_data: '#/components/schemas/ConfirmationData'
+      confirmation: '#/components/schemas/Confirmation'
+      payment_method_type: '#/components/schemas/PaymentMethodType'
+      payment_method: '#/components/schemas/PaymentMethod'
+      invoicing_bank_card_data: '#/components/schemas/InvoicingBankCardData'
+      b2b_sberbank_calculated_vat_data: '#/components/schemas/B2bSberbankCalculatedVatData'
+      b2b_sberbank_untaxed_vat_data: '#/components/schemas/B2bSberbankUntaxedVatData'
+      b2b_sberbank_mixed_vat_data: '#/components/schemas/B2bSberbankMixedVatData'
+      b2b_sberbank_vat_data: '#/components/schemas/B2bSberbankVatData'
+      settlement_item_type: '#/components/schemas/SettlementItemType'
+      payment_status: '#/components/schemas/PaymentStatus'
+      payment_deal_info: '#/components/schemas/PaymentDealInfo'
+      airline: '#/components/schemas/Airline'
+      payment: '#/components/schemas/Payment'
+      payment_method_data: '#/components/schemas/PaymentMethodData'
+      transfer_data: '#/components/schemas/TransferData'
+      receiver: '#/components/schemas/Receiver'
+      settlement_payment_item: '#/components/schemas/SettlementPaymentArray/items'
+    methods:
+      create: post /payments
+      list: get /payments
+      retrieve: get /payments/{payment_id}
+      capture: post /payments/{payment_id}/capture
+      cancel: post /payments/{payment_id}/cancel
+
+  payment_methods:
+    models:
+      bank_card_type: '#/components/schemas/BankCardType'
+      payment_method_status: '#/components/schemas/PaymentMethodStatus'
+      bank_card_data: '#/components/schemas/BankCardData'
+      card_request_data_with_csc: '#/components/schemas/CardRequestDataWithCsc'
+      save_payment_method_bank_card: '#/components/schemas/SavePaymentMethodBankCard'
+      payment_methods_confirmation_type: '#/components/schemas/PaymentMethodsConfirmationType'
+    methods:
+      create: post /payment_methods
+      retrieve: get /payment_methods/{payment_method_id}
+
+  invoices:
+    models:
+      locale: '#/components/schemas/Locale'
+      invoice: '#/components/schemas/Invoice'
+      line_item: '#/components/schemas/LineItem'
+      delivery_method_data: '#/components/schemas/DeliveryMethodData'
+      delivery_method: '#/components/schemas/DeliveryMethod'
+    methods:
+      create: post /invoices
+      retrieve: get /invoices/{invoice_id}
+
+  refunds:
+    models:
+      refund_sources_data: '#/components/schemas/RefundSourcesData'
+      refund: '#/components/schemas/Refund'
+      refund_status: '#/components/schemas/RefundStatus'
+      settlement_refund_item: '#/components/schemas/SettlementRefundArray/items'
+      electronic_certificate_refund_article: '#/components/schemas/ElectronicCertificateRefundArticle'
+      refund_method_type: '#/components/schemas/RefundMethodType'
+      refund_method: '#/components/schemas/RefundMethod'
+    methods:
+      create: post /refunds
+      list: get /refunds
+      retrieve: get /refunds/{refund_id}
+
+  receipts:
+    models:
+      receipt_data_customer: '#/components/schemas/ReceiptDataCustomer'
+      industry_details: '#/components/schemas/IndustryDetails'
+      operational_details: '#/components/schemas/OperationalDetails'
+      receipt_item_measure: '#/components/schemas/ReceiptItemMeasure'
+      mark_quantity: '#/components/schemas/MarkQuantity'
+      receipt_item_payment_subject: '#/components/schemas/ReceiptItemPaymentSubject'
+      receipt_item_payment_mode: '#/components/schemas/ReceiptItemPaymentMode'
+      mark_code_info: '#/components/schemas/MarkCodeInfo'
+      receipt_registration_status: '#/components/schemas/ReceiptRegistrationStatus'
+      receipt: '#/components/schemas/Receipt'
+      receipt_type: '#/components/schemas/ReceiptType'
+      settlement: '#/components/schemas/Settlement'
+      receipt_item_agent_type: '#/components/schemas/ReceiptItemAgentType'
+      receipt_item_supplier: '#/components/schemas/ReceiptItemSupplier'
+    methods:
+      create: post /receipts
+      list: get /receipts
+      retrieve: get /receipts/{receipt_id}
+
+  deals:
+    models:
+      safe_deal: '#/components/schemas/SafeDeal'
+      deal_type: '#/components/schemas/DealType'
+      fee_moment: '#/components/schemas/FeeMoment'
+    methods:
+      create: post /deals
+      list: get /deals
+      retrieve: get /deals/{deal_id}
+
+  payouts:
+    models:
+      payout_destination_data_type: '#/components/schemas/PayoutDestinationDataType'
+      payout_destination_data: '#/components/schemas/PayoutDestinationData'
+      payout: '#/components/schemas/Payout'
+      payout_status: '#/components/schemas/PayoutStatus'
+      payouts_list: '#/components/schemas/PayoutsList'
+      payout_deal_info: '#/components/schemas/PayoutDealInfo'
+      payout_destination: '#/components/schemas/PayoutDestination'
+    methods:
+      create: post /payouts
+      list: get /payouts
+      search: get /payouts/search
+      retrieve: get /payouts/{payout_id}
+
+  sbp_banks:
+    methods:
+      list: get /sbp_banks
+
+  personal_data:
+    models:
+      personal_data: '#/components/schemas/PersonalData'
+      personal_data_type: '#/components/schemas/PersonalDataType'
+      personal_data_request: '#/components/schemas/PersonalDataRequest'
+    methods:
+      create: post /personal_data
+      retrieve: get /personal_data/{personal_data_id}
+
+  webhooks:
+    models:
+      notification_event_type: '#/components/schemas/NotificationEventType'
+      webhook: '#/components/schemas/Webhook'
+    methods:
+      create: post /webhooks
+      list: get /webhooks
+      delete: delete /webhooks/{webhook_id}
+
+  me:
+    methods:
+      retrieve: get /me
+
+settings:
+  # All generated integration tests that hit the prism mock http server are marked
+  # as skipped. Removing this setting or setting it to false enables tests, but
+  # doing so may result in test failures due to bugs in the test server.
+  #
+  # [prism mock http server]: https://stoplight.io/open-source/prism
+  disable_mock_tests: true
+  license: Apache-2.0
+
+# `client_settings` define settings for the API client, such as extra constructor
+# arguments (used for authentication), retry behavior, idempotency, etc.
+client_settings:
+  opts:
+    username:
+      type: string
+      nullable: true
+      auth:
+        security_scheme: BasicAuth
+        role: username
+      description: HTTP Basic аутентификация клиента ЮKassa
+      read_env: YOOMONEY_USERNAME
+    password:
+      type: string
+      nullable: true
+      auth:
+        security_scheme: BasicAuth
+        role: password
+      description: HTTP Basic аутентификация клиента ЮKassa
+      read_env: YOOMONEY_PASSWORD
+
+# `readme` is used to configure the code snippets that will be rendered in the
+# README.md of various SDKs. In particular, you can change the `headline`
+# snippet's endpoint and the arguments to call it with.
+readme:
+  example_requests:
+    default:
+      type: request
+      endpoint: post /payments
+      params:
+        amount: REPLACE_ME
+    headline:
+      type: request
+      endpoint: post /payments
+      params:
+        amount: REPLACE_ME
