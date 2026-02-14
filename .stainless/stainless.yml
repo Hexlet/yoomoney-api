@@ -70,7 +70,7 @@ resources:
       payment_method_data: '#/components/schemas/PaymentMethodData'
       transfer_data: '#/components/schemas/TransferData'
       receiver: '#/components/schemas/Receiver'
-      settlement_payment_item: '#/components/schemas/SettlementPaymentArray/items'
+      settlement_payment_item: '#/components/schemas/SettlementPaymentItem'
     methods:
       create: post /payments
       list: get /payments
@@ -106,7 +106,7 @@ resources:
       refund_sources_data: '#/components/schemas/RefundSourcesData'
       refund: '#/components/schemas/Refund'
       refund_status: '#/components/schemas/RefundStatus'
-      settlement_refund_item: '#/components/schemas/SettlementRefundArray/items'
+      settlement_refund_item: '#/components/schemas/SettlementRefundItem'
       electronic_certificate_refund_article: '#/components/schemas/ElectronicCertificateRefundArticle'
       refund_method_type: '#/components/schemas/RefundMethodType'
       refund_method: '#/components/schemas/RefundMethod'
@@ -205,16 +205,13 @@ client_settings:
       nullable: true
       auth:
         security_scheme: BasicAuth
-        role: username
-      description: HTTP Basic аутентификация клиента ЮKassa
+        role: value
+      description: HTTP Basic аутентификация клиента ЮKassa (shopId)
       read_env: YOOMONEY_USERNAME
     password:
       type: string
       nullable: true
-      auth:
-        security_scheme: BasicAuth
-        role: password
-      description: HTTP Basic аутентификация клиента ЮKassa
+      description: HTTP Basic аутентификация клиента ЮKassa (секретный ключ)
       read_env: YOOMONEY_PASSWORD
 
 # `readme` is used to configure the code snippets that will be rendered in the

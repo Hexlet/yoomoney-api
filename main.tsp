@@ -36,7 +36,11 @@ using TypeSpec.Rest;
   version: "1.0.0",
 })
 @server("https://api.yookassa.ru/v3", "Production")
-@useAuth(BasicAuth | OAuth2Auth<[{
+@useAuth(BasicAuth | OAuth2)
+namespace YooKassa;
+
+@doc("Авторизация клиента ЮKassa с использованием OAuth-токена")
+model OAuth2 is OAuth2Auth<[{
   type: OAuth2FlowType.implicit,
   authorizationUrl: "https://yookassa.ru/oauth/v2/authorize",
   scopes: [
@@ -49,5 +53,4 @@ using TypeSpec.Rest;
     "checkout:receipts_get",
     "checkout:get_fees",
   ],
-}]>)
-namespace YooKassa;
+}]>;
