@@ -1803,15 +1803,6 @@ paths:
         - Webhooks
 security:
   - BasicAuth: []
-  - OAuth2:
-      - checkout:payments_create
-      - checkout:payments_capture
-      - checkout:payments_cancel
-      - checkout:payments_get
-      - checkout:refunds_create
-      - checkout:refunds_get
-      - checkout:receipts_get
-      - checkout:get_fees
 components:
   schemas:
     AccountId:
@@ -5010,21 +5001,6 @@ components:
       type: http
       scheme: basic
       description: HTTP Basic аутентификация клиента ЮKassa
-    OAuth2:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: https://yookassa.ru/oauth/v2/authorize
-          scopes:
-            checkout:payments_create: ''
-            checkout:payments_capture: ''
-            checkout:payments_cancel: ''
-            checkout:payments_get: ''
-            checkout:refunds_create: ''
-            checkout:refunds_get: ''
-            checkout:receipts_get: ''
-            checkout:get_fees: ''
-      description: Авторизация клиента ЮKassa с использованием OAuth-токена
 servers:
   - url: https://api.yookassa.ru/v3
     description: Production

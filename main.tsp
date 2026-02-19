@@ -37,5 +37,6 @@ using TypeSpec.Rest;
   version: "1.0.0",
 })
 @server("https://api.yookassa.ru/v3", "Production")
-@useAuth(global.BasicAuth | global.OAuth2)
+// OAuth2 intentionally excluded from generated spec for now.
+@useAuth(global.BasicAuth)
 namespace YooKassa;
