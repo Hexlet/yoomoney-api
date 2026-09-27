@@ -2081,9 +2081,23 @@ components:
           allOf:
             - $ref: '#/components/schemas/Locale'
           description: Язык интерфейса, писем и смс.
+      discriminator:
+        propertyName: type
+        mapping:
+          redirect: '#/components/schemas/ConfirmationDataRedirect'
+          external: '#/components/schemas/ConfirmationDataExternal'
+          qr: '#/components/schemas/ConfirmationDataQr'
+          embedded: '#/components/schemas/ConfirmationDataEmbedded'
+          mobile_application: '#/components/schemas/ConfirmationDataMobileApplication'
     ConfirmationDataEmbedded:
       type: object
+      required:
+        - type
       properties:
+        type:
+          type: string
+          enum:
+            - embedded
         locale:
           allOf:
             - $ref: '#/components/schemas/Locale'
@@ -2092,7 +2106,13 @@ components:
         - $ref: '#/components/schemas/ConfirmationData'
     ConfirmationDataExternal:
       type: object
+      required:
+        - type
       properties:
+        type:
+          type: string
+          enum:
+            - external
         locale:
           allOf:
             - $ref: '#/components/schemas/Locale'
@@ -2102,8 +2122,13 @@ components:
     ConfirmationDataMobileApplication:
       type: object
       required:
+        - type
         - return_url
       properties:
+        type:
+          type: string
+          enum:
+            - mobile_application
         return_url:
           allOf:
             - $ref: '#/components/schemas/ReturnUrl'
@@ -2112,13 +2137,25 @@ components:
         - $ref: '#/components/schemas/ConfirmationData'
     ConfirmationDataQr:
       type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - qr
       allOf:
         - $ref: '#/components/schemas/ConfirmationData'
     ConfirmationDataRedirect:
       type: object
       required:
+        - type
         - return_url
       properties:
+        type:
+          type: string
+          enum:
+            - redirect
         enforce:
           type: boolean
           description: Требование пройти аутентификацию при оплате банковской картой по 3-D Secure.
@@ -2284,12 +2321,8 @@ components:
             - $ref: '#/components/schemas/PaymentMethodDataSberBnpl'
           description: Данные для оплаты конкретным способом.
         confirmation:
-          anyOf:
-            - $ref: '#/components/schemas/ConfirmationDataRedirect'
-            - $ref: '#/components/schemas/ConfirmationDataExternal'
-            - $ref: '#/components/schemas/ConfirmationDataQr'
-            - $ref: '#/components/schemas/ConfirmationDataEmbedded'
-            - $ref: '#/components/schemas/ConfirmationDataMobileApplication'
+          allOf:
+            - $ref: '#/components/schemas/ConfirmationData'
           description: Данные, необходимые для инициирования выбранного сценария подтверждения платежа пользователем.
         save_payment_method:
           type: boolean
