@@ -117,7 +117,7 @@ model CreatePaymentRequest {
   payment_method_data?: PaymentMethodDataBankCard | PaymentMethodDataCash | PaymentMethodDataSberbank | PaymentMethodDataTinkoffBank | PaymentMethodDataYooMoney | PaymentMethodDataMobileBalance | PaymentMethodDataB2bSberbank | PaymentMethodDataSbp | PaymentMethodDataSberLoan | PaymentMethodDataElectronicCertificate | PaymentMethodDataSberBnpl;
 
   @doc("Данные, необходимые для инициирования выбранного сценария подтверждения платежа пользователем.")
-  confirmation?: ConfirmationDataRedirect | ConfirmationDataExternal | ConfirmationDataQr | ConfirmationDataEmbedded | ConfirmationDataMobileApplication;
+  confirmation?: ConfirmationData;
 
   @doc("Сохранение платежных данных.")
   save_payment_method?: boolean;
