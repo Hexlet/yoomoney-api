@@ -12,7 +12,6 @@
     "@typespec/versioning": "^0.78.0"
   },
   "devDependencies": {
-    "npm-check-updates": "^19.3.2"
+    "npm-check-updates": "^19.6.6"
   }
 }
-

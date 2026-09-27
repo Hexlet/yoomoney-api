@@ -2,13 +2,12 @@ namespace YooKassa;
 
 // === Confirmation Data Type ===
 
-// Union строк, а не enum: при enum openapi3 1.9 теряет первый вариант в mapping дискриминатора.
-union ConfirmationDataType {
-  "redirect",
-  "external",
-  "qr",
-  "embedded",
-  "mobile_application",
+enum ConfirmationDataType {
+  redirect,
+  external,
+  qr,
+  embedded,
+  mobile_application,
 }
 
 enum ConfirmationType {
@@ -31,7 +30,7 @@ model ConfirmationData {
 }
 
 model ConfirmationDataRedirect extends ConfirmationData {
-  type: "redirect";
+  type: ConfirmationDataType.redirect;
 
   @doc("Требование пройти аутентификацию при оплате банковской картой по 3-D Secure.")
   enforce?: boolean;
@@ -41,25 +40,25 @@ model ConfirmationDataRedirect extends ConfirmationData {
 }
 
 model ConfirmationDataExternal extends ConfirmationData {
-  type: "external";
+  type: ConfirmationDataType.external;
 
   @doc("Язык интерфейса.")
   locale?: Locale;
 }
 
 model ConfirmationDataQr extends ConfirmationData {
-  type: "qr";
+  type: ConfirmationDataType.qr;
 }
 
 model ConfirmationDataEmbedded extends ConfirmationData {
-  type: "embedded";
+  type: ConfirmationDataType.embedded;
 
   @doc("Язык интерфейса.")
   locale?: Locale;
 }
 
 model ConfirmationDataMobileApplication extends ConfirmationData {
-  type: "mobile_application";
+  type: ConfirmationDataType.mobile_application;
 
   @doc("URL, на который необходимо перенаправить пользователя после оплаты.")
   return_url: ReturnUrl;
